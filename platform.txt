@@ -25,7 +25,7 @@ compiler.c.elf.flags=-Os -g -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -W
 compiler.S.cmd=arm-none-eabi-gcc
 compiler.S.flags=-c -x assembler-with-cpp {compiler.libstm.c.flags}
 compiler.cpp.cmd=arm-none-eabi-g++
-compiler.cpp.flags=-c -Os -g {compiler.warning_flags} -std=gnu++11 -ffunction-sections -fdata-sections -fno-threadsafe-statics --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -MMD {compiler.libstm.c.flags}
+compiler.cpp.flags=-c -Os -g {compiler.warning_flags} -std=gnu++11 -ffunction-sections -fdata-sections -fno-threadsafe-statics --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -MMD {compiler.libstm.c.flags} -D{build.vect-offset}
 compiler.ar.cmd=arm-none-eabi-ar
 compiler.ar.flags=rcs
 compiler.objcopy.cmd=arm-none-eabi-objcopy

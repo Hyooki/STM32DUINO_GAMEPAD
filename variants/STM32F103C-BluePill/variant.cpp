@@ -18,6 +18,8 @@
 
 #include "variant.h"
 
+extern const uint32_t VECT_TAB_OFFSET = VECT_TAB_OFFSET_VARIANT;
+
 /* GPIO ID    | label
   PA0         | A0
   PA1         | A1

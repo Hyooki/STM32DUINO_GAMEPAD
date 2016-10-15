@@ -110,11 +110,9 @@
 /*!< Uncomment the following line if you need to relocate your vector Table in
      Internal SRAM. */ 
 /* #define VECT_TAB_SRAM */
-#ifndef VECT_TAB_OFFSET
-#define VECT_TAB_OFFSET  0x0 /*!< Vector Table base offset field. 
-                                  This value must be a multiple of 0x200. */
-#endif
-
+//#define VECT_TAB_OFFSET  0x0 /*!< Vector Table base offset field. This value must be a multiple of 0x200. */
+// The VECT_TAB_OFFSET macro is not yet available from the arduino boards.txt during static library compilation.
+extern const uint32_t VECT_TAB_OFFSET;
 
 /**
   * @}
