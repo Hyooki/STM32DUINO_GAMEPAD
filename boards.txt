@@ -27,6 +27,7 @@ NUCLEO-F103RB.build.variant=STM32F103RB-Nucleo
 NUCLEO-F103RB.build.system_library=libstm32f1
 NUCLEO-F103RB.build.variant_system_lib=libstm32f1_nucleo-f103rb_gcc_rel.a
 NUCLEO-F103RB.build.extra_flags=-mthumb -DSTM32F103xB
+NUCLEO-F103RB.build.vect-offset=VECT_TAB_OFFSET=0x0
 
 NUCLEO-F103RB.build.vect-offset=
 
