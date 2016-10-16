@@ -18,7 +18,12 @@
 
 # Tool suffix when cross-compiling
 ifndef ARM_GCC_TOOLCHAIN
+ifeq ($(OS),Windows_NT)
+# Change this to match the path to the ARM toolcahin e.g. change the USERNAME 
+ARM_GCC_TOOLCHAIN = C:\Users\$(USERNAME)\AppData\Local\Arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1\bin
+else
 ARM_GCC_TOOLCHAIN = /usr/bin
+endif
 endif
 CROSS_COMPILE = $(ARM_GCC_TOOLCHAIN)/arm-none-eabi-
 
