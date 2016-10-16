@@ -31,12 +31,12 @@ NUCLEO-F103RB:
 	@echo ------------------------------------------------------------------------
 	@echo --- Making $@
 	@echo ---
-	@$(MAKE) CHIP=__NUCLEO_F103RB__ $(SUBMAKE_OPTIONS) -f stm32f1.mk
+	@$(MAKE) CHIP=STM32F103xB $(SUBMAKE_OPTIONS) -f stm32f1.mk
 	@echo ------------------------------------------------------------------------
 
 .PHONY: clean
 clean:
 	@echo ------------------------------------------------------------------------
 	@echo --- Cleaning lib release and debug
-	@$(MAKE) CHIP=__NUCLEO_F103RB__ $(SUBMAKE_OPTIONS) -f stm32f1.mk $@
+	@$(MAKE) CHIP=STM32F103xB $(SUBMAKE_OPTIONS) -f stm32f1.mk $@
 	@echo ------------------------------------------------------------------------

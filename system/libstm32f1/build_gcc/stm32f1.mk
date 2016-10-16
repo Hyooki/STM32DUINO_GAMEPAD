@@ -40,18 +40,14 @@ endif
 # Path
 #-------------------------------------------------------------------------------
 
-# Board options
-ifeq ($(CHIP), __NUCLEO_F103RB__)
-CHIP_NAME=nucleo-f103rb
-CHIP_SERIE=STM32F1xx
-CFLAGS += -DSTM32F103xB
-# Output directories
-OUTPUT_BIN = ../../../variants/STM32F103RB-Nucleo
-#Startup file
-CHIP_STARTUP_FILE=startup_stm32f103xb.s
-else
-$(error CHIP not recognized)
+ifndef lc
+lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
 endif
+
+CFLAGS += -D$(CHIP)
+CHIP_SERIE=STM32F1xx
+CHIP_STARTUP_LOWERCASE=$(call lc,$(CHIP))
+CHIP_STARTUP_FILE=startup_$(CHIP_STARTUP_LOWERCASE).s
 
 # Libraries
 PROJECT_BASE_PATH = ..
@@ -100,13 +96,14 @@ include $(TOOLCHAIN).mk
 #-------------------------------------------------------------------------------
 ifdef DEBUG
 OUTPUT_OBJ=debug
-OUTPUT_LIB=$(LIBNAME)_$(CHIP_NAME)_$(TOOLCHAIN)_dbg.a
 else
 OUTPUT_OBJ=release
-OUTPUT_LIB=$(LIBNAME)_$(CHIP_NAME)_$(TOOLCHAIN)_rel.a
 endif
 
-OUTPUT_PATH=$(OUTPUT_OBJ)_$(CHIP_NAME)
+OUTPUT_LIB=$(OUTPUT_OBJ)_$(CHIP).a
+
+OUTPUT_PATH=$(OUTPUT_OBJ)_$(CHIP)
+OUTPUT_BIN=bin
 
 #-------------------------------------------------------------------------------
 # C source files and objects
