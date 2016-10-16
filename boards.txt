@@ -80,3 +80,53 @@ BluePill-F103C8.menu.upload_method.BMPMethod=BMP (Black Magic Probe)
 BluePill-F103C8.menu.upload_method.BMPMethod.upload.protocol=gdb_bmp
 BluePill-F103C8.menu.upload_method.BMPMethod.upload.tool=bmp_upload
 BluePill-F103C8.menu.upload_method.BMPMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
+
+################################################################################
+
+################################################################################
+# MapleMini-F103CB board
+
+MapleMini-F103CB.name=MapleMini-F103CB
+
+MapleMini-F103CB.vid.0=0x0483
+MapleMini-F103CB.pid.0=0x374b
+MapleMini-F103CB.node=NODE_F103CB
+
+MapleMini-F103CB.upload.protocol=nucleoFlasher
+MapleMini-F103CB.upload.maximum_size=131072
+MapleMini-F103CB.upload.maximum_data_size=20480
+
+MapleMini-F103CB.build.mcu=cortex-m3
+MapleMini-F103CB.build.board=NUCLEO_F103CB
+MapleMini-F103CB.build.core=arduino
+MapleMini-F103CB.build.ldscript=linker_scripts/STM32F103CB_FLASH.ld
+MapleMini-F103CB.build.variant=STM32F103CB-MapleMini
+MapleMini-F103CB.build.system_library=libstm32f103c
+MapleMini-F103CB.build.chip=STM32F103xB
+MapleMini-F103CB.build.extra_flags=-mthumb -D{build.chip}
+MapleMini-F103CB.build.vect-offset=VECT_TAB_OFFSET_VARIANT=0x0
+
+#---------------------------- UPLOAD METHODS ---------------------------
+
+MapleMini-F103CB.menu.upload_method.STLinkMethod=STLink
+MapleMini-F103CB.menu.upload_method.STLinkMethod.upload.protocol=STLink
+MapleMini-F103CB.menu.upload_method.STLinkMethod.upload.tool=stlink_upload
+MapleMini-F103CB.menu.upload_method.STLinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1 -DSERIAL_USB -DGENERIC_BOOTLOADER
+
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod=STM32duino bootloader
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.upload.protocol=maple_dfu
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.upload.tool=maple_upload
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.build.vect-offset=VECT_TAB_OFFSET_VARIANT=0x2000
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.build.ldscript=linker_scripts/STM32F103CB_FLASH_bootloader.ld
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.upload.usbID=1EAF:0003
+MapleMini-F103CB.menu.upload_method.DFUUploadMethod.upload.altID=2
+
+MapleMini-F103CB.menu.upload_method.serialMethod=Serial
+MapleMini-F103CB.menu.upload_method.serialMethod.upload.protocol=maple_serial
+MapleMini-F103CB.menu.upload_method.serialMethod.upload.tool=serial_upload
+
+MapleMini-F103CB.menu.upload_method.BMPMethod=BMP (Black Magic Probe)
+MapleMini-F103CB.menu.upload_method.BMPMethod.upload.protocol=gdb_bmp
+MapleMini-F103CB.menu.upload_method.BMPMethod.upload.tool=bmp_upload
+MapleMini-F103CB.menu.upload_method.BMPMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
