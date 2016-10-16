@@ -31,12 +31,12 @@ STM32F103C:
 	@echo ------------------------------------------------------------------------
 	@echo --- Making $@
 	@echo ---
-	@$(MAKE) CHIP=__STM32F103C__ $(SUBMAKE_OPTIONS) -f stm32f103c.mk
+	@$(MAKE) CHIP=STM32F103xB $(SUBMAKE_OPTIONS) -f stm32f103c.mk
 	@echo ------------------------------------------------------------------------
 
 .PHONY: clean
 clean:
 	@echo ------------------------------------------------------------------------
 	@echo --- Cleaning lib release and debug
-	@$(MAKE) CHIP=__STM32F103C__ $(SUBMAKE_OPTIONS) -f stm32f103c.mk $@
+	@$(MAKE) CHIP=STM32F103xB $(SUBMAKE_OPTIONS) -f stm32f103c.mk $@
 	@echo ------------------------------------------------------------------------

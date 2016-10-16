@@ -685,6 +685,7 @@ system_stm32f1xx.o:
 00000000 D SystemCoreClock
 00000000 T SystemCoreClockUpdate
 00000000 T SystemInit
+         U VECT_TAB_OFFSET
 
 timer.o:
 00000000 T attachIntHandle
