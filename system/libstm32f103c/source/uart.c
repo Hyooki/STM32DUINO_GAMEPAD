@@ -89,8 +89,6 @@ typedef struct {
   void (*uart_clock_init)(void);
   void (*uart_force_reset)(void);
   void (*uart_release_reset)(void);
-  void (*gpio_tx_clock_init)(void);
-  void (*gpio_rx_clock_init)(void);
   uint8_t rxpData[UART_RCV_SIZE];
   volatile uint32_t data_available;
   volatile uint8_t begin;
@@ -104,8 +102,6 @@ typedef struct {
   GPIO_InitTypeDef tx_pin;
   GPIO_TypeDef  *rx_port;
   GPIO_InitTypeDef rx_pin;
-  void (*gpio_tx_clock_init)(void);
-  void (*gpio_rx_clock_init)(void);
   void (*uart_rx_irqHandle)(void);
   uint8_t rxpData[UART_RCV_SIZE];
   volatile uint32_t data_available;
@@ -127,8 +123,6 @@ static void usart1_release_reset(void)  { __HAL_RCC_USART1_RELEASE_RESET(); }
 static void usart2_clock_enable(void)   { __HAL_RCC_USART2_CLK_ENABLE(); }
 static void usart2_force_reset(void)    { __HAL_RCC_USART2_FORCE_RESET(); }
 static void usart2_release_reset(void)  { __HAL_RCC_USART2_RELEASE_RESET(); }
-static void gpioa_clock_enable(void)    { __HAL_RCC_GPIOA_CLK_ENABLE(); }
-static void gpiob_clock_enable(void)    { __HAL_RCC_GPIOB_CLK_ENABLE(); }
 
 static void USART1_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO_REMAP_USART1_DISABLE();}
 static void USART2_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO_REMAP_USART2_DISABLE();}
@@ -159,10 +153,6 @@ static uart_conf_t g_uart_config[NB_UART_MANAGED] = {
     .uart_force_reset = usart1_force_reset,
     //uart release reset
     .uart_release_reset = usart1_release_reset,
-    //TX gpio clock init
-    .gpio_tx_clock_init = gpioa_clock_enable,
-    //RX gpio clock init
-    .gpio_rx_clock_init = gpioa_clock_enable,
     .data_available = 0,
     .begin = 0,
     .end = 0,
@@ -182,10 +172,6 @@ static uart_conf_t g_uart_config[NB_UART_MANAGED] = {
     .uart_force_reset = usart2_force_reset,
     //uart release reset
     .uart_release_reset = usart2_release_reset,
-    //TX gpio clock init
-    .gpio_tx_clock_init = gpioa_clock_enable,
-    //RX gpio clock init
-    .gpio_rx_clock_init = gpioa_clock_enable,
     .data_available = 0,
     .begin = 0,
     .end = 0,
@@ -200,8 +186,6 @@ static uart_emul_conf_t g_uartEmul_config[NB_UART_EMUL_MANAGED] = {
     .uartEmul_typedef = {UART1_EMUL_E},
     .tx_port = GPIOB, .tx_pin = {GPIO_PIN_3, GPIO_MODE_OUTPUT_PP, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH},
     .rx_port = GPIOA, .rx_pin = {GPIO_PIN_10, GPIO_MODE_IT_FALLING, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH},
-    .gpio_tx_clock_init = gpiob_clock_enable,
-    .gpio_rx_clock_init = gpioa_clock_enable,
     .uart_rx_irqHandle = NULL,
     .data_available = 0,
     .begin = 0,
@@ -266,9 +250,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
     return;
   }
 
-  // Enable GPIO TX/RX clock
-  g_uart_config[uart_id].gpio_tx_clock_init();
-  g_uart_config[uart_id].gpio_rx_clock_init();
 
   // Enable USART clock
   g_uart_config[uart_id].uart_clock_init();
@@ -278,10 +259,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
   //##-2- Configure peripheral GPIO ##########################################
 
   // UART TX GPIO pin configuration
-  HAL_GPIO_Init(g_uart_config[uart_id].tx_port, &g_uart_config[uart_id].tx_pin);
+
+  digital_io_init(g_uart_config[uart_id].tx_port, g_uart_config[uart_id].tx_pin.Pin, g_uart_config[uart_id].tx_pin.Mode, g_uart_config[uart_id].tx_pin.Pull);
 
   // UART RX GPIO pin configuration
-  HAL_GPIO_Init(g_uart_config[uart_id].rx_port, &g_uart_config[uart_id].rx_pin);
+  digital_io_init(g_uart_config[uart_id].rx_port, g_uart_config[uart_id].rx_pin.Pin, g_uart_config[uart_id].rx_pin.Mode, g_uart_config[uart_id].rx_pin.Pull);
 
   HAL_NVIC_SetPriority(g_uart_config[uart_id].irqtype, 0, 1);
   HAL_NVIC_EnableIRQ(g_uart_config[uart_id].irqtype);
@@ -516,15 +498,11 @@ void USART2_IRQHandler(void)
   */
 void HAL_UART_Emul_MspInit(UART_Emul_HandleTypeDef *huart)
 {
-  // Enable GPIO TX/RX clock
-  g_uartEmul_config[UART1_EMUL_E].gpio_tx_clock_init();
-  g_uartEmul_config[UART1_EMUL_E].gpio_rx_clock_init();
-
-  // UART TX GPIO pin configuration
-  HAL_GPIO_Init(g_uartEmul_config[UART1_EMUL_E].tx_port, &g_uartEmul_config[UART1_EMUL_E].tx_pin);
+  digital_io_init(g_uartEmul_config[UART1_EMUL_E].tx_port, g_uartEmul_config[UART1_EMUL_E].tx_pin.Pin, g_uartEmul_config[UART1_EMUL_E].tx_pin.Mode, g_uartEmul_config[UART1_EMUL_E].tx_pin.Pull);
 
   // UART RX GPIO pin configuration
-  HAL_GPIO_Init(g_uartEmul_config[UART1_EMUL_E].rx_port, &g_uartEmul_config[UART1_EMUL_E].rx_pin);
+  digital_io_init(g_uartEmul_config[UART1_EMUL_E].rx_port, g_uartEmul_config[UART1_EMUL_E].rx_pin.Pin, g_uartEmul_config[UART1_EMUL_E].rx_pin.Mode, g_uartEmul_config[UART1_EMUL_E].rx_pin.Pull);
+
 }
 
 /**

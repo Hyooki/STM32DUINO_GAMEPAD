@@ -49,6 +49,7 @@
 #include "stm32f1xx.h"
 #include "hw_config.h"
 #include "spi_com.h"
+#include "digital_io.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -76,9 +77,6 @@ typedef struct {
   SPI_HandleTypeDef spiHandle;
   SPI_TypeDef *spi_instance;
   void (*spi_clock_init)(void);
-  void (*spi_sck_clock_init)(void);
-  void (*spi_miso_clock_init)(void);
-  void (*spi_mosi_clock_init)(void);
   void (*spi_alternate)(void);
   GPIO_TypeDef  *mosi_port;
   uint32_t mosi_pin;
@@ -106,9 +104,6 @@ typedef struct {
   */
 
 static void SPI1_CLK_ENABLE(void)               { __HAL_RCC_SPI1_CLK_ENABLE();  }
-static void SPI1_SCK_GPIO_CLK_ENABLE(void)      { __HAL_RCC_GPIOB_CLK_ENABLE(); }
-static void SPI1_MISO_GPIO_CLK_ENABLE(void)     { __HAL_RCC_GPIOA_CLK_ENABLE(); }
-static void SPI1_MOSI_GPIO_CLK_ENABLE(void)     { __HAL_RCC_GPIOA_CLK_ENABLE(); }
 static void SPI1_Alternate(void)                { __HAL_AFIO_REMAP_SPI1_DISABLE(); }
 
 /**
@@ -124,9 +119,6 @@ static spi_init_info_t spi_init_info[NB_SPI_INSTANCES] = {
     .init_done = 0,
     .spi_instance = SPI1,
     .spi_clock_init = SPI1_CLK_ENABLE,
-    .spi_sck_clock_init = SPI1_SCK_GPIO_CLK_ENABLE,
-    .spi_miso_clock_init = SPI1_MISO_GPIO_CLK_ENABLE,
-    .spi_mosi_clock_init = SPI1_MOSI_GPIO_CLK_ENABLE,
     .spi_alternate = SPI1_Alternate,
     .mosi_port = GPIOA,
     .mosi_pin =  GPIO_PIN_7,
@@ -257,11 +249,6 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 
   if(spi_init_info[spi_id].init_done == 0) {
 
-    //##-1- Enable peripherals and GPIO Clocks #################################
-    spi_init_info[spi_id].spi_sck_clock_init();
-    spi_init_info[spi_id].spi_miso_clock_init();
-    spi_init_info[spi_id].spi_mosi_clock_init();
-
     // Enable SPI clock
     spi_init_info[spi_id].spi_clock_init();
 
@@ -270,25 +257,11 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
     spi_init_info[spi_id].spi_alternate();
 
     // SPI SCK GPIO pin configuration
-    GPIO_InitStructure.Pin       = spi_init_info[spi_id].sck_pin;
-    GPIO_InitStructure.Mode      = spi_init_info[spi_id].sck_mode;
-    GPIO_InitStructure.Pull      = spi_init_info[spi_id].sck_pull;
-    GPIO_InitStructure.Speed     = spi_init_info[spi_id].sck_speed;
-    HAL_GPIO_Init(spi_init_info[spi_id].sck_port, &GPIO_InitStructure);
+    digital_io_init(spi_init_info[spi_id].sck_port, spi_init_info[spi_id].sck_pin, spi_init_info[spi_id].sck_mode, spi_init_info[spi_id].sck_pull);
 
-    // SPI MISO GPIO pin configuration
-    GPIO_InitStructure.Pin       = spi_init_info[spi_id].miso_pin;
-    GPIO_InitStructure.Mode      = spi_init_info[spi_id].miso_mode;
-    GPIO_InitStructure.Pull      = spi_init_info[spi_id].miso_pull;
-    GPIO_InitStructure.Speed     = spi_init_info[spi_id].miso_speed;
-    HAL_GPIO_Init(spi_init_info[spi_id].miso_port, &GPIO_InitStructure);
+    digital_io_init(spi_init_info[spi_id].miso_port, spi_init_info[spi_id].miso_pin, spi_init_info[spi_id].miso_mode, spi_init_info[spi_id].miso_pull);
 
-    // SPI MOSI GPIO pin configuration
-    GPIO_InitStructure.Pin       = spi_init_info[spi_id].mosi_pin;
-    GPIO_InitStructure.Mode      = spi_init_info[spi_id].mosi_mode;
-    GPIO_InitStructure.Pull      = spi_init_info[spi_id].mosi_pull;
-    GPIO_InitStructure.Speed     = spi_init_info[spi_id].mosi_speed;
-    HAL_GPIO_Init(spi_init_info[spi_id].mosi_port, &GPIO_InitStructure);
+    digital_io_init(spi_init_info[spi_id].mosi_port, spi_init_info[spi_id].mosi_pin, spi_init_info[spi_id].mosi_mode, spi_init_info[spi_id].mosi_pull);
 
     spi_init_info[spi_id].init_done = 1;
   }

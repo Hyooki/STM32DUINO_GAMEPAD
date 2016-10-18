@@ -49,6 +49,7 @@
 #include "stm32f1xx.h"
 #include "hw_config.h"
 #include "interrupt.h"
+#include "digital_io.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -155,7 +156,6 @@ void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin,
                                   void (*callback)(void), uint32_t mode)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
   volatile uint32_t *CRxRegister;
   uint32_t CRxRegOffset = 0;
   uint32_t ODRRegOffset = 0;
@@ -163,9 +163,7 @@ void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin,
   uint8_t position;
   uint8_t id = get_pin_id(pin);
 
-  // GPIO pin configuration
-  GPIO_InitStruct.Pin       = pin;
-  GPIO_InitStruct.Mode      = mode;
+  uint32_t pull;
 
   //read the pull mode directly in the register as no function exists to get it.
   //Do it in case the user already defines the IO through the digital io
@@ -181,17 +179,15 @@ void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin,
 
   if((*CRxRegister & ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << CRxRegOffset)) == (ConfigMask << CRxRegOffset)) {
     if((port->ODR & (GPIO_ODR_ODR0 << ODRRegOffset)) == (GPIO_ODR_ODR0 << ODRRegOffset)) {
-      GPIO_InitStruct.Pull = GPIO_PULLUP;
+      pull = GPIO_PULLUP;
     } else {
-      GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+      pull = GPIO_PULLDOWN;
     }
   } else {
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    pull = GPIO_NOPULL;
   }
 
-  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
-
-  HAL_GPIO_Init(port, &GPIO_InitStruct);
+  digital_io_init(port, pin, mode, pull);
 
   gpio_irq_conf[id].callback = callback;
 

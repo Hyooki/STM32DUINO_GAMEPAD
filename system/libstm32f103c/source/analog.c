@@ -50,6 +50,7 @@
 #include "hw_config.h"
 #include "analog.h"
 #include "timer.h"
+#include "digital_io.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -389,27 +390,10 @@ int8_t get_analog_instance(GPIO_TypeDef  *port, uint32_t pin)
   */
 void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
 {
-  GPIO_InitTypeDef          GPIO_InitStruct;
-
-  /*##-1- Enable peripherals and GPIO Clocks #################################*/
-  /* Enable GPIO clock ****************************************/
-  if(g_analog_config[g_current_init_id].port == GPIOA) {
-    __GPIOA_CLK_ENABLE();
-  } else if(g_analog_config[g_current_init_id].port == GPIOB){
-    __GPIOB_CLK_ENABLE();
-  } else if(g_analog_config[g_current_init_id].port == GPIOC){
-    __GPIOC_CLK_ENABLE();
-  }
-
   /* DAC Periph clock enable */
   __HAL_RCC_DAC1_CLK_ENABLE();
 
-  /*##-2- Configure peripheral GPIO ##########################################*/
-  /* DAC Channel1 GPIO pin configuration */
-  GPIO_InitStruct.Pin = g_analog_config[g_current_init_id].pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(g_analog_config[g_current_init_id].port, &GPIO_InitStruct);
+  digital_io_init(g_analog_config[g_current_init_id].port, g_analog_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
 }
 
 #endif
@@ -539,27 +523,11 @@ void dac_stop(GPIO_TypeDef  *port, uint32_t pin)
   */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
-  GPIO_InitTypeDef  GPIO_InitStruct;
-
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* ADC Periph clock enable */
   __HAL_RCC_ADC1_CLK_ENABLE();
 
-  /* Enable GPIO clock ****************************************/
-  if(g_analog_config[g_current_init_id].port == GPIOA) {
-    __GPIOA_CLK_ENABLE();
-  } else if(g_analog_config[g_current_init_id].port == GPIOB){
-    __GPIOB_CLK_ENABLE();
-  } else if(g_analog_config[g_current_init_id].port == GPIOC){
-    __GPIOC_CLK_ENABLE();
-  }
-
-  /*##-2- Configure peripheral GPIO ##########################################*/
-  /* ADC Channel GPIO pin configuration */
-  GPIO_InitStruct.Pin = g_analog_config[g_current_init_id].pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(g_analog_config[g_current_init_id].port, &GPIO_InitStruct);
+  digital_io_init(g_analog_config[g_current_init_id].port, g_analog_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
 }
 
 /**
@@ -665,30 +633,14 @@ uint16_t adc_read_value(GPIO_TypeDef  *port, uint32_t pin, uint8_t do_init)
   */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
-  GPIO_InitTypeDef   GPIO_InitStruct;
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* TIMx Peripheral clock enable */
   timer_enable_clock(htim);
 
-  /* Enable GPIO Channels Clock */
-  /* Enable GPIO clock ****************************************/
-  if(g_analog_config[g_current_init_id].port == GPIOA) {
-    __GPIOA_CLK_ENABLE();
-  } else if(g_analog_config[g_current_init_id].port == GPIOB){
-    __GPIOB_CLK_ENABLE();
-  } else if(g_analog_config[g_current_init_id].port == GPIOC){
-    __GPIOC_CLK_ENABLE();
-  }
-
-  /* Common configuration for all channels */
-  GPIO_InitStruct.Pin = g_analog_config[g_current_init_id].pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-
   g_analog_config[g_current_init_id].alFunction();
 
-  HAL_GPIO_Init(g_analog_config[g_current_init_id].port, &GPIO_InitStruct);
+  digital_io_init(g_analog_config[g_current_init_id].port, g_analog_config[g_current_init_id].pin, GPIO_MODE_AF_PP, GPIO_NOPULL);
+  
 }
 
 /**

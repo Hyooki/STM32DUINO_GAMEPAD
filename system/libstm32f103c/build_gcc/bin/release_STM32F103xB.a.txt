@@ -556,6 +556,7 @@ analog.o:
 00000000 T adc_read_value
 00000000 T dac_stop
 00000000 T dac_write_value
+         U digital_io_init
 00000000 D g_analog_config
 00000000 b g_current_init_id
 00000000 T get_analog_instance
@@ -570,7 +571,6 @@ analog.o:
          U HAL_ADC_Start
          U HAL_ADC_Stop
          U HAL_ADCEx_Calibration_Start
-         U HAL_GPIO_Init
          U HAL_TIM_PWM_ConfigChannel
          U HAL_TIM_PWM_DeInit
          U HAL_TIM_PWM_Init
@@ -630,6 +630,7 @@ hw_config.o:
 00000000 T UsageFault_Handler
 
 interrupt.o:
+         U digital_io_init
 00000000 T EXTI0_IRQHandler
 00000000 T EXTI1_IRQHandler
 00000000 T EXTI15_10_IRQHandler
@@ -640,7 +641,6 @@ interrupt.o:
 00000000 d gpio_irq_conf
 00000000 T HAL_GPIO_EXTI_Callback
          U HAL_GPIO_EXTI_IRQHandler
-         U HAL_GPIO_Init
          U HAL_NVIC_DisableIRQ
          U HAL_NVIC_EnableIRQ
          U HAL_NVIC_SetPriority
@@ -648,8 +648,8 @@ interrupt.o:
 00000000 T stm32_interrupt_enable
 
 spi_com.o:
+         U digital_io_init
          U HAL_GPIO_DeInit
-         U HAL_GPIO_Init
          U HAL_RCC_GetPCLK2Freq
          U HAL_SPI_DeInit
          U HAL_SPI_Init
@@ -663,9 +663,6 @@ spi_com.o:
 00000000 T spi_transfer
 00000000 t SPI1_Alternate
 00000000 t SPI1_CLK_ENABLE
-00000000 t SPI1_MISO_GPIO_CLK_ENABLE
-00000000 t SPI1_MOSI_GPIO_CLK_ENABLE
-00000000 t SPI1_SCK_GPIO_CLK_ENABLE
 
 stm32_eeprom.o:
 00000000 T eeprom_read_byte
@@ -744,8 +741,8 @@ timer.o:
 00000000 T TimerPulseInit
 
 twi.o:
+         U digital_io_init
 00000000 d g_i2c_init_info
-         U HAL_GPIO_Init
          U HAL_I2C_DeInit
          U HAL_I2C_ER_IRQHandler
 00000000 T HAL_I2C_ErrorCallback
@@ -777,23 +774,17 @@ twi.o:
 00000000 T I2C1_EV_IRQHandler
 00000000 t i2c1_force_reset
 00000000 t i2c1_release_reset
-00000000 t i2c1_scl_clk_disable
-00000000 t i2c1_scl_clk_enable
-00000000 t i2c1_sda_clk_disable
-00000000 t i2c1_sda_clk_enable
 
 uart.o:
          U attachIntHandle
+         U digital_io_init
 00000001 C g_rx_data
 00000000 d g_uart_config
 00000000 d g_uartEmul_config
 00000000 b g_UartEmulHandle
 00000000 b g_UartHandle
 00000000 T get_uart_id_from_handle
-00000000 t gpioa_clock_enable
-00000000 t gpiob_clock_enable
          U HAL_GPIO_DeInit
-         U HAL_GPIO_Init
          U HAL_NVIC_ClearPendingIRQ
          U HAL_NVIC_EnableIRQ
          U HAL_NVIC_SetPriority
