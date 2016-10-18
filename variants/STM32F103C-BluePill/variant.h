@@ -84,34 +84,10 @@ enum {
 #define GPIO_PIN_UART_TX              0x00001000
 #define GPIO_PIN_UART_RX              0x00002000
 
-//defines here the ardduino IOs type
-//digital pins
-#define ARDUINO_PIN_D0                0x00000000
-#define ARDUINO_PIN_D1                0x00000001
-#define ARDUINO_PIN_D2                0x00000002
-#define ARDUINO_PIN_D3                0x00000003
-#define ARDUINO_PIN_D4                0x00000004
-#define ARDUINO_PIN_D5                0x00000005
-#define ARDUINO_PIN_D6                0x00000006
-#define ARDUINO_PIN_D7                0x00000007
-#define ARDUINO_PIN_D8                0x00000008
-#define ARDUINO_PIN_D9                0x00000009
-#define ARDUINO_PIN_D10               0x0000000A
-#define ARDUINO_PIN_D11               0x0000000B
-#define ARDUINO_PIN_D12               0x0000000C
-#define ARDUINO_PIN_D13               0x0000000D
-#define ARDUINO_PIN_D14               0x0000000E
-#define ARDUINO_PIN_D15               0x0000000F
-
 #define MAX_DIGITAL_IOS               PC15 // All pins can be use as digital pins
 
 //analog pins
-#define ARDUINO_PIN_A0                0x00000010
-#define ARDUINO_PIN_A1                0x00000011
-#define ARDUINO_PIN_A2                0x00000012
-#define ARDUINO_PIN_A3                0x00000013
-#define ARDUINO_PIN_A4                0x00000014
-#define ARDUINO_PIN_A5                0x00000015
+#define ARDUINO_PIN_A0                0x00000000
 
 #define MAX_ANALOG_IOS                7
 
@@ -119,12 +95,12 @@ enum {
 #define ARDUINO_PIN_EXT               0x10000000
 
 //Analog pins
-static const uint8_t A0  = ARDUINO_PIN_A0;
-static const uint8_t A1  = ARDUINO_PIN_A1;
-static const uint8_t A2  = ARDUINO_PIN_A2;
-static const uint8_t A3  = ARDUINO_PIN_A3;
-static const uint8_t A4  = ARDUINO_PIN_A4;
-static const uint8_t A5  = ARDUINO_PIN_A5;
+//static const uint8_t A0  = ARDUINO_PIN_A0;
+//static const uint8_t A1  = ARDUINO_PIN_A1;
+//static const uint8_t A2  = ARDUINO_PIN_A2;
+//static const uint8_t A3  = ARDUINO_PIN_A3;
+//static const uint8_t A4  = ARDUINO_PIN_A4;
+//static const uint8_t A5  = ARDUINO_PIN_A5;
 
 //On-board LED pin number
 #define LED_BUILTIN                   PC13
