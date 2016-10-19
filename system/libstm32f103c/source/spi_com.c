@@ -235,7 +235,6 @@ void spi_init(spi_instance_e spi_id, uint32_t speed, spi_mode_e mode, uint8_t ms
   */
 void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 {
-  GPIO_InitTypeDef GPIO_InitStructure;
   uint8_t spi_id = NB_SPI_INSTANCES;
 
   for(uint8_t i = 0; i < NB_SPI_INSTANCES; i++) {
