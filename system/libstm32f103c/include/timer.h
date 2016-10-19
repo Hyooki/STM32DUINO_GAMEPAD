@@ -61,12 +61,6 @@ typedef enum {
   bits_32 = 0xFFFFFFFF
 } timer_prescaler_limit;
 
-typedef enum {
-  TIMER_PWM       = 0x00000000,
-  TIMER_RESERVED  = 0x00000001,
-  TIMER_OTHER     = 0x00000002
-} timer_mode_e;
-
 typedef struct{
   GPIO_TypeDef * port;
   uint32_t pin;
@@ -80,9 +74,6 @@ typedef struct {
   IRQn_Type irqtype;
   void (*irqHandle)(timer_id_e);
   void (*irqHandleOC)(timer_id_e, uint32_t);
-  void (*timer_clock_init)(void);
-  void (*timer_clock_reset)(void);
-  timer_mode_e timer_mode;
   timer_prescaler_limit prescalerLimit;
   timer_toggle_pin_config_str toggle_pin;
   uint8_t configured;

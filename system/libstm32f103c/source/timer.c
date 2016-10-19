@@ -92,15 +92,6 @@ static timer_id_e get_timer_id_from_handle(TIM_HandleTypeDef *htim);
   * @{
   */
 
-static void tim1_clock_enable(void)   { __TIM1_CLK_ENABLE(); }
-static void tim1_clock_reset(void)    { __TIM1_CLK_DISABLE(); }
-static void tim2_clock_enable(void)   { __TIM2_CLK_ENABLE(); }
-static void tim2_clock_reset(void)    { __TIM2_CLK_DISABLE(); }
-static void tim3_clock_enable(void)   { __TIM3_CLK_ENABLE(); }
-static void tim3_clock_reset(void)    { __TIM3_CLK_DISABLE(); }
-static void tim4_clock_enable(void)   { __TIM4_CLK_ENABLE(); }
-static void tim4_clock_reset(void)    { __TIM4_CLK_DISABLE(); }
-
 /**
   * @}
   */
@@ -120,11 +111,6 @@ static timer_conf_t g_timer_config[NB_TIMER_MANAGED] = {
     .timInstance = TIM1, .irqtype = TIM1_UP_IRQn,
     .irqHandle = NULL,
     .irqHandleOC = NULL,
-    .timer_mode = TIMER_OTHER,
-    //timer clock init
-    .timer_clock_init = tim1_clock_enable,
-    //timer clock reset
-    .timer_clock_reset = tim1_clock_reset,
     //timer prescaler limit : 8 or 16 bits
     .prescalerLimit = bits_16,
     //toggle pin configuration
@@ -136,11 +122,6 @@ static timer_conf_t g_timer_config[NB_TIMER_MANAGED] = {
     .timInstance = TIM2, .irqtype = TIM2_IRQn,
     .irqHandle = NULL,
     .irqHandleOC = NULL,
-    .timer_mode = TIMER_OTHER,
-    //timer clock init
-    .timer_clock_init = tim2_clock_enable,
-    //timer clock reset
-    .timer_clock_reset = tim2_clock_reset,
     //timer prescaler limit : 8 or 16 bits
     .prescalerLimit = bits_16,
     //toggle pin configuration
@@ -152,11 +133,6 @@ static timer_conf_t g_timer_config[NB_TIMER_MANAGED] = {
     .timInstance = TIM3, .irqtype = TIM3_IRQn,
     .irqHandle = NULL,
     .irqHandleOC = NULL,
-    .timer_mode = TIMER_OTHER,
-    //timer clock init
-    .timer_clock_init = tim3_clock_enable,
-    //timer clock reset
-    .timer_clock_reset = tim3_clock_reset,
     //timer prescaler limit : 8 or 16 bits
     .prescalerLimit = bits_16,
     //toggle pin configuration
@@ -168,11 +144,6 @@ static timer_conf_t g_timer_config[NB_TIMER_MANAGED] = {
     .timInstance = TIM4, .irqtype = TIM4_IRQn,
     .irqHandle = NULL,
     .irqHandleOC = NULL,
-    .timer_mode = TIMER_OTHER,
-    //timer clock init
-    .timer_clock_init = tim4_clock_enable,
-    //timer clock reset
-    .timer_clock_reset = tim4_clock_reset,
     //timer prescaler limit : 8 or 16 bits
     .prescalerLimit = bits_16,
     //toggle pin configuration
@@ -215,7 +186,19 @@ void timer_enable_clock(TIM_HandleTypeDef *htim)
   uint8_t i = 0;
   for(i = 0; i < NB_TIMER_MANAGED; i++) {
     if(g_timer_config[i].timInstance == htim->Instance) {
-      g_timer_config[i].timer_clock_init();
+      #ifdef TIM1
+        if (g_timer_config[i].timInstance == TIM1) __TIM1_CLK_ENABLE();
+      #endif
+      #ifdef TIM2
+        if (g_timer_config[i].timInstance == TIM2) __TIM2_CLK_ENABLE();
+      #endif
+      #ifdef TIM3
+        if (g_timer_config[i].timInstance == TIM3) __TIM3_CLK_ENABLE();
+      #endif
+      #ifdef TIM4
+        if (g_timer_config[i].timInstance == TIM4) __TIM4_CLK_ENABLE();
+      #endif
+      
       g_timer_config[i].configured = 1;
       break;
     }
@@ -232,7 +215,19 @@ void timer_disable_clock(TIM_HandleTypeDef *htim)
   uint8_t i = 0;
   for(i = 0; i < NB_TIMER_MANAGED; i++) {
     if(g_timer_config[i].timInstance == htim->Instance) {
-      g_timer_config[i].timer_clock_reset();
+      #ifdef TIM1
+        if (g_timer_config[i].timInstance == TIM1) __TIM1_CLK_DISABLE();
+      #endif
+      #ifdef TIM2
+        if (g_timer_config[i].timInstance == TIM2) __TIM2_CLK_DISABLE();
+      #endif
+      #ifdef TIM3
+        if (g_timer_config[i].timInstance == TIM3) __TIM3_CLK_DISABLE();
+      #endif
+      #ifdef TIM4
+        if (g_timer_config[i].timInstance == TIM4) __TIM4_CLK_DISABLE();
+      #endif
+      
       g_timer_config[i].configured = 0;
       break;
     }
@@ -249,8 +244,7 @@ timer_id_e getInactiveTimer(void)
   timer_id_e timer_id = NB_TIMER_MANAGED;
   uint8_t i = 0;
   for(i = 0; i < NB_TIMER_MANAGED; i++) {
-    if((g_timer_config[i].configured == 0) &&
-       (g_timer_config[i].timer_mode == TIMER_OTHER)){
+    if((g_timer_config[i].configured == 0)){
       timer_id = i;
       break;
     }
