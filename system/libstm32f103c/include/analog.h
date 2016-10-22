@@ -50,25 +50,33 @@
 typedef struct {
   GPIO_TypeDef  *port;
   uint32_t pin;
-  void (*alFunction)(void);
   ADC_TypeDef *adcInstance;
   ADC_ChannelConfTypeDef adcChannelConf;
+}adc_config_str;
 
 #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
+typedef struct {
+  GPIO_TypeDef  *port;
+  uint32_t pin;
   DAC_TypeDef *dacInstance;
   uint32_t dacChannel;
   DAC_ChannelConfTypeDef dacChannelConf;
+}dac_config_str;
 #endif
 
+typedef struct {
+  GPIO_TypeDef  *port;
+  uint32_t pin;
+  void (*alFunction)(void);
   TIM_TypeDef *timInstance;
   uint32_t timChannel;
   uint32_t useNchannel;
   TIM_OC_InitTypeDef timConfig;
   TIM_HandleTypeDef timHandle;
-}analog_config_str;
+}pwm_config_str;
+
 
 /* Exported constants --------------------------------------------------------*/
-#define NB_ANALOG_CHANNELS       15
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
@@ -77,8 +85,6 @@ void dac_stop(GPIO_TypeDef  *port, uint32_t pin);
 uint16_t adc_read_value(GPIO_TypeDef  *port, uint32_t pin, uint8_t do_init);
 void pwm_start(GPIO_TypeDef  *port, uint32_t pin, uint32_t clock_freq, uint32_t period, uint32_t value, uint8_t do_init);
 void pwm_stop(GPIO_TypeDef  *port, uint32_t pin);
-
-int8_t get_analog_instance(GPIO_TypeDef  *port, uint32_t pin);
 
 #ifdef __cplusplus
 }
