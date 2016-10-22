@@ -416,7 +416,7 @@ void dac_write_value(GPIO_TypeDef  *port, uint32_t pin, uint32_t value, uint8_t 
   int8_t id = get_analog_instance(port, pin);
   if(id < 0 ) return;
 
-  if(g_analog_config[id].adcInstance == NULL) {
+  if(g_analog_config[id].dacInstance == NULL) {
     return;
   }
 
