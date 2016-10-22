@@ -103,71 +103,62 @@ static uint8_t g_current_init_id = 0;
 
 
 //Give details about the analog pins.
-analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
-  {
+adc_config_str g_adc_config[] = {
+    {
     .port = GPIOA,
     .pin = GPIO_PIN_0,
     .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_0,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
+    .adcChannelConf = { .Channel = ADC_CHANNEL_0, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME }
   },
   {
     .port = GPIOA,
     .pin = GPIO_PIN_1,
     .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_1,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
+    .adcChannelConf = { .Channel = ADC_CHANNEL_1, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME }
   },
   {
     .port = GPIOA,
     .pin = GPIO_PIN_4,
     .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_4,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
+    .adcChannelConf = { .Channel = ADC_CHANNEL_4, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME }
   },
   {
     .port = GPIOA,
     .pin = GPIO_PIN_5,
     .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_5,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
+    .adcChannelConf = { .Channel = ADC_CHANNEL_5, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME }
   },
+  {
+    .port = GPIOB,
+    .pin = GPIO_PIN_0,
+    .adcInstance = ADC1,
+    .adcChannelConf = { .Channel = ADC_CHANNEL_8, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME }
+  },
+  {
+    .port = GPIOC,
+    .pin = GPIO_PIN_0,
+    .adcInstance = ADC1,
+    .adcChannelConf = { .Channel = ADC_CHANNEL_10, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME },
+  },
+  {
+    .port = GPIOC,
+    .pin = GPIO_PIN_1,
+    .adcInstance = ADC1,
+    .adcChannelConf = { .Channel = ADC_CHANNEL_11, .Rank = ADC_REGULAR_RANK_1, .SamplingTime = SAMPLINGTIME },
+  },
+};
+
+#if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
+dac_config_str g_dac_config[] = {
+    
+};
+#endif
+
+pwm_config_str g_pwm_config[] = {
   {
     .port = GPIOA,
     .pin = GPIO_PIN_7,
     .alFunction = TIM1_AF_PartialRemap,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
     .timInstance = TIM1,
     .timChannel = TIM_CHANNEL_1,
     .useNchannel = 1,
@@ -182,37 +173,9 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
      .timHandle = {}
   },
   {
-    .port = GPIOA,
-    .pin = GPIO_PIN_10,
-    .alFunction = NULL,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL,
-  },
-  {
-    .port = GPIOB,
-    .pin = GPIO_PIN_0,
-    .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_8,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
-  },
-  {
     .port = GPIOB,
     .pin = GPIO_PIN_3,
     .alFunction = TIM2_AF_FullRemap,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
     .timInstance = TIM2,
     .timChannel = TIM_CHANNEL_2,
     .useNchannel = 0,
@@ -230,10 +193,6 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
     .port = GPIOB,
     .pin = GPIO_PIN_4,
     .alFunction = TIM3_AF_PartialRemap,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
     .timInstance = TIM3,
     .timChannel = TIM_CHANNEL_1,
     .useNchannel = 0,
@@ -249,21 +208,8 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
   },
   {
     .port = GPIOB,
-    .pin = GPIO_PIN_5,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
-  },
-  {
-    .port = GPIOB,
     .pin = GPIO_PIN_6,
     .alFunction = TIM4_AF_NoRemap,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
     .timInstance = TIM4,
     .timChannel = TIM_CHANNEL_1,
     .useNchannel = 0,
@@ -281,10 +227,6 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
     .port = GPIOB,
     .pin = GPIO_PIN_10,
     .alFunction = TIM2_AF_FullRemap,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
     .timInstance = TIM2,
     .timChannel = TIM_CHANNEL_3,
     .useNchannel = 0,
@@ -299,40 +241,8 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
   },
   {
     .port = GPIOC,
-    .pin = GPIO_PIN_0,
-    .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_10,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
-  },
-  {
-    .port = GPIOC,
-    .pin = GPIO_PIN_1,
-    .adcInstance = ADC1,
-    .adcChannelConf = {
-      .Channel = ADC_CHANNEL_11,
-      .Rank = ADC_REGULAR_RANK_1,
-      .SamplingTime = SAMPLINGTIME
-    },
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
-    .timInstance = NULL
-  },
-  {
-    .port = GPIOC,
     .pin = GPIO_PIN_7,
     .alFunction = TIM3_AF_FullRemap,
-    .adcInstance = NULL,
-    #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-    .dacInstance = NULL,
-    #endif
     .timInstance = TIM3,
     .timChannel = TIM_CHANNEL_2,
     .useNchannel = 0,
@@ -347,6 +257,10 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
      .timHandle = {}
   },
 };
+
+#define NB_ADC_INSTANCES ((int8_t)(sizeof(g_adc_config) / sizeof(g_adc_config[0])))
+#define NB_DAC_INSTANCES ((int8_t)(sizeof(g_dac_config) / sizeof(g_dac_config[0])))
+#define NB_PWM_INSTANCES ((int8_t)(sizeof(g_pwm_config) / sizeof(g_pwm_config[0])))
 
 /**
   * @}
@@ -363,18 +277,55 @@ analog_config_str g_analog_config[NB_ANALOG_CHANNELS] = {
   * @param  pin : the gpio pin to use
   * @retval None
   */
-int8_t get_analog_instance(GPIO_TypeDef  *port, uint32_t pin)
+int8_t get_adc_instance(GPIO_TypeDef  *port, uint32_t pin)
 {
   int8_t i;
 
-  for(i = 0; i < NB_ANALOG_CHANNELS ; i++) {
-    if((g_analog_config[i].port == port)&&(g_analog_config[i].pin == pin)) {
+  for(i = 0; i < NB_ADC_INSTANCES ; i++) {
+    if((g_adc_config[i].port == port)&&(g_adc_config[i].pin == pin)) {
       return i;
     }
   }
   return -1;
 }
 
+#if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
+/**
+  * @brief  This function will return the corresponding dac configuration id
+  * @param  port : the gpio port to use
+  * @param  pin : the gpio pin to use
+  * @retval None
+  */
+int8_t get_dac_instance(GPIO_TypeDef  *port, uint32_t pin)
+{
+  int8_t i;
+
+  for(i = 0; i < NB_DAC_INSTANCES ; i++) {
+    if((g_dac_config[i].port == port)&&(g_dac_config[i].pin == pin)) {
+      return i;
+    }
+  }
+  return -1;
+}
+#endif
+
+/**
+  * @brief  This function will return the corresponding pwm configuration id
+  * @param  port : the gpio port to use
+  * @param  pin : the gpio pin to use
+  * @retval None
+  */
+int8_t get_pwm_instance(GPIO_TypeDef  *port, uint32_t pin)
+{
+  int8_t i;
+
+  for(i = 0; i < NB_PWM_INSTANCES ; i++) {
+    if((g_pwm_config[i].port == port)&&(g_pwm_config[i].pin == pin)) {
+      return i;
+    }
+  }
+  return -1;
+}
 
 
 ////////////////////////// DAC INTERFACE FUNCTIONS /////////////////////////////
@@ -393,7 +344,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
   /* DAC Periph clock enable */
   __HAL_RCC_DAC1_CLK_ENABLE();
 
-  digital_io_init(g_analog_config[g_current_init_id].port, g_analog_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
+  digital_io_init(g_dac_config[g_current_init_id].port, g_dac_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
 }
 
 #endif
@@ -413,14 +364,14 @@ void dac_write_value(GPIO_TypeDef  *port, uint32_t pin, uint32_t value, uint8_t 
   DAC_HandleTypeDef    DacHandle;
 
   //find the instance in the global
-  int8_t id = get_analog_instance(port, pin);
+  int8_t id = get_dac_instance(port, pin);
   if(id < 0 ) return;
 
-  if(g_analog_config[id].dacInstance == NULL) {
+  if(g_dac_config[id].dacInstance == NULL) {
     return;
   }
 
-  DacHandle.Instance = g_analog_config[id].dacInstance;
+  DacHandle.Instance = g_dac_config[id].dacInstance;
 
   if(do_init == 1) {
 
@@ -439,8 +390,8 @@ void dac_write_value(GPIO_TypeDef  *port, uint32_t pin, uint32_t value, uint8_t 
     }
 
     /*##-2- Configure DAC channel1 #############################################*/
-    if (HAL_DAC_ConfigChannel(&DacHandle, &g_analog_config[id].dacChannelConf,
-                              g_analog_config[id].dacChannel) != HAL_OK)
+    if (HAL_DAC_ConfigChannel(&DacHandle, &g_dac_config[id].dacChannelConf,
+                              g_dac_config[id].dacChannel) != HAL_OK)
     {
       /* Channel configuration Error */
       return;
@@ -448,7 +399,7 @@ void dac_write_value(GPIO_TypeDef  *port, uint32_t pin, uint32_t value, uint8_t 
   }
 
   /*##-3- Set DAC Channel1 DHR register ######################################*/
-  if (HAL_DAC_SetValue(&DacHandle, g_analog_config[id].dacChannel,
+  if (HAL_DAC_SetValue(&DacHandle, g_dac_config[id].dacChannel,
                        DAC_ALIGN_12B_R, value) != HAL_OK)
   {
     /* Setting value Error */
@@ -456,7 +407,7 @@ void dac_write_value(GPIO_TypeDef  *port, uint32_t pin, uint32_t value, uint8_t 
   }
 
   /*##-4- Enable DAC Channel1 ################################################*/
-  HAL_DAC_Start(&DacHandle, g_analog_config[id].dacChannel);
+  HAL_DAC_Start(&DacHandle, g_dac_config[id].dacChannel);
 
   #endif
 }
@@ -490,16 +441,16 @@ void dac_stop(GPIO_TypeDef  *port, uint32_t pin)
   DAC_HandleTypeDef    DacHandle;
 
   //find the instance in the global
-  int8_t id = get_analog_instance(port, pin);
+  int8_t id = get_dac_instance(port, pin);
   if(id < 0 ) return;
 
-  if(g_analog_config[id].adcInstance == NULL) {
+  if(g_dac_config[id].adcInstance == NULL) {
     return;
   }
 
-  DacHandle.Instance = g_analog_config[id].dacInstance;
+  DacHandle.Instance = g_dac_config[id].dacInstance;
 
-  HAL_DAC_Stop(&DacHandle, g_analog_config[id].dacChannel);
+  HAL_DAC_Stop(&DacHandle, g_dac_config[id].dacChannel);
 
   if (HAL_DAC_DeInit(&DacHandle) != HAL_OK)
   {
@@ -527,7 +478,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
   /* ADC Periph clock enable */
   __HAL_RCC_ADC1_CLK_ENABLE();
 
-  digital_io_init(g_analog_config[g_current_init_id].port, g_analog_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
+  digital_io_init(g_adc_config[g_current_init_id].port, g_adc_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
 }
 
 /**
@@ -552,11 +503,11 @@ uint16_t adc_read_value(GPIO_TypeDef  *port, uint32_t pin, uint8_t do_init)
   ADC_HandleTypeDef    AdcHandle;
 
   //find the instance in the global
-  int8_t id = get_analog_instance(port, pin);
+  int8_t id = get_adc_instance(port, pin);
   if(id < 0 ) return 0;
   __IO uint16_t uhADCxConvertedValue = 0;
 
-  AdcHandle.Instance = g_analog_config[id].adcInstance;
+  AdcHandle.Instance = g_adc_config[id].adcInstance;
 
   if(do_init == 1) {
 
@@ -575,7 +526,7 @@ uint16_t adc_read_value(GPIO_TypeDef  *port, uint32_t pin, uint8_t do_init)
   }
 
   /*##-2- Configure ADC regular channel ######################################*/
-  if (HAL_ADC_ConfigChannel(&AdcHandle, &g_analog_config[id].adcChannelConf) != HAL_OK)
+  if (HAL_ADC_ConfigChannel(&AdcHandle, &g_adc_config[id].adcChannelConf) != HAL_OK)
   {
     /* Channel Configuration Error */
     return 0;
@@ -635,12 +586,13 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* TIMx Peripheral clock enable */
+
   timer_enable_clock(htim);
 
-  g_analog_config[g_current_init_id].alFunction();
+  g_pwm_config[g_current_init_id].alFunction();
 
-  digital_io_init(g_analog_config[g_current_init_id].port, g_analog_config[g_current_init_id].pin, GPIO_MODE_AF_PP, GPIO_NOPULL);
-  
+  digital_io_init(g_pwm_config[g_current_init_id].port, g_pwm_config[g_current_init_id].pin, GPIO_MODE_AF_PP, GPIO_NOPULL);
+
 }
 
 /**
@@ -667,41 +619,41 @@ void pwm_start(GPIO_TypeDef  *port, uint32_t pin, uint32_t clock_freq,
                 uint32_t period, uint32_t value, uint8_t do_init)
 {
   //find the instance in the global
-  int8_t id = get_analog_instance(port, pin);
+  int8_t id = get_pwm_instance(port, pin);
   if(id < 0) return;
-
+  
   /* Compute the prescaler value to have TIM counter clock equal to clock_freq Hz */
-  g_analog_config[id].timHandle.Instance               = g_analog_config[id].timInstance;
-  g_analog_config[id].timHandle.Init.Prescaler         = (uint32_t)(SystemCoreClock / clock_freq) - 1;
-  g_analog_config[id].timHandle.Init.Period            = period;
-  g_analog_config[id].timHandle.Init.ClockDivision     = 0;
-  g_analog_config[id].timHandle.Init.CounterMode       = TIM_COUNTERMODE_UP;
-  g_analog_config[id].timHandle.Init.RepetitionCounter = 0;
+  g_pwm_config[id].timHandle.Instance               = g_pwm_config[id].timInstance;
+  g_pwm_config[id].timHandle.Init.Prescaler         = (uint32_t)(SystemCoreClock / clock_freq) - 1;
+  g_pwm_config[id].timHandle.Init.Period            = period;
+  g_pwm_config[id].timHandle.Init.ClockDivision     = 0;
+  g_pwm_config[id].timHandle.Init.CounterMode       = TIM_COUNTERMODE_UP;
+  g_pwm_config[id].timHandle.Init.RepetitionCounter = 0;
 
   if(do_init == 1) {
     g_current_init_id = id;
-    if (HAL_TIM_PWM_Init(&g_analog_config[id].timHandle) != HAL_OK) {
+    if (HAL_TIM_PWM_Init(&g_pwm_config[id].timHandle) != HAL_OK) {
       return;
     }
   }
 
-  HAL_TIM_PWM_Stop(&g_analog_config[id].timHandle, g_analog_config[id].timChannel);
+  HAL_TIM_PWM_Stop(&g_pwm_config[id].timHandle, g_pwm_config[id].timChannel);
 
   /*##-2- Configure the PWM channels #########################################*/
   /* Common configuration for all channels */
-  g_analog_config[id].timConfig.Pulse = value;
+  g_pwm_config[id].timConfig.Pulse = value;
 
-  if (HAL_TIM_PWM_ConfigChannel(&g_analog_config[id].timHandle, &g_analog_config[id].timConfig,
-                                  g_analog_config[id].timChannel) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&g_pwm_config[id].timHandle, &g_pwm_config[id].timConfig,
+                                  g_pwm_config[id].timChannel) != HAL_OK)
   {
     /*##-2- Configure the PWM channels #########################################*/
     return;
   }
 
-  if(g_analog_config[id].useNchannel) {
-    HAL_TIMEx_PWMN_Start(&g_analog_config[id].timHandle, g_analog_config[id].timChannel);
+  if(g_pwm_config[id].useNchannel) {
+    HAL_TIMEx_PWMN_Start(&g_pwm_config[id].timHandle, g_pwm_config[id].timChannel);
   } else {
-    HAL_TIM_PWM_Start(&g_analog_config[id].timHandle, g_analog_config[id].timChannel);
+    HAL_TIM_PWM_Start(&g_pwm_config[id].timHandle, g_pwm_config[id].timChannel);
   }
 }
 
@@ -714,16 +666,16 @@ void pwm_start(GPIO_TypeDef  *port, uint32_t pin, uint32_t clock_freq,
 void pwm_stop(GPIO_TypeDef  *port, uint32_t pin)
 {
   //find the instance in the global
-  int8_t id = get_analog_instance(port, pin);
+  int8_t id = get_pwm_instance(port, pin);
   if(id < 0) return;
 
-  if(g_analog_config[id].useNchannel) {
-    HAL_TIMEx_PWMN_Stop(&g_analog_config[id].timHandle, g_analog_config[id].timChannel);
+  if(g_pwm_config[id].useNchannel) {
+    HAL_TIMEx_PWMN_Stop(&g_pwm_config[id].timHandle, g_pwm_config[id].timChannel);
   } else {
-    HAL_TIM_PWM_Stop(&g_analog_config[id].timHandle, g_analog_config[id].timChannel);
+    HAL_TIM_PWM_Stop(&g_pwm_config[id].timHandle, g_pwm_config[id].timChannel);
   }
 
-  HAL_TIM_PWM_DeInit(&g_analog_config[id].timHandle);
+  HAL_TIM_PWM_DeInit(&g_pwm_config[id].timHandle);
 }
 
 

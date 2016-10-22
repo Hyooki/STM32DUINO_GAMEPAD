@@ -101,8 +101,6 @@ static timer_id_e get_timer_id_from_handle(TIM_HandleTypeDef *htim);
   */
 
 /// @brief timer caracteristics
-extern analog_config_str g_analog_config[NB_ANALOG_CHANNELS];
-
 static TIM_HandleTypeDef g_TimerHandle[NB_TIMER_MANAGED];
 
 static timer_conf_t g_timer_config[NB_TIMER_MANAGED] = {
