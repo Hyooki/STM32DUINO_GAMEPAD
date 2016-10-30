@@ -50,7 +50,6 @@
 typedef enum {
   USART1_E = 0,
   USART2_E = 1,
-  NB_UART_MANAGED
 } uart_id_e;
 
 typedef enum {
@@ -65,7 +64,26 @@ typedef enum {
 } uart_option_e;
 
 /* Exported constants --------------------------------------------------------*/
+extern uint8_t NB_UART_MANAGED;
+
 #define UART_RCV_SIZE 128
+
+typedef struct {
+  USART_TypeDef * usart_typedef;
+  IRQn_Type       irqtype;
+  GPIO_TypeDef  *tx_port;
+  uint32_t tx_pin;
+  GPIO_TypeDef  *rx_port;
+  uint32_t rx_pin;
+  void (*uart_af_remap)(void);
+  uint8_t rxpData[UART_RCV_SIZE];
+  volatile uint32_t data_available;
+  volatile uint8_t begin;
+  volatile uint8_t end;
+  uart_option_e uart_option;
+}uart_conf_t;
+
+/* Exported constants --------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

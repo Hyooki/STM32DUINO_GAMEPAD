@@ -78,20 +78,6 @@
   */
 
 /// @brief defines the global attributes of the UART
-typedef struct {
-  USART_TypeDef * usart_typedef;
-  IRQn_Type       irqtype;
-  GPIO_TypeDef  *tx_port;
-  uint32_t tx_pin;
-  GPIO_TypeDef  *rx_port;
-  uint32_t rx_pin;
-  void (*uart_af_remap)(void);
-  uint8_t rxpData[UART_RCV_SIZE];
-  volatile uint32_t data_available;
-  volatile uint8_t begin;
-  volatile uint8_t end;
-  uart_option_e uart_option;
-}uart_conf_t;
 
 typedef struct {
   UART_Emul_TypeDef uartEmul_typedef;
@@ -114,9 +100,7 @@ typedef struct {
 /** @addtogroup STM32F1xx_System_Private_Macros
   * @{
   */
-static void USART1_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO_REMAP_USART1_DISABLE();}
-static void USART2_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO_REMAP_USART2_DISABLE();}
-
+  
 /**
   * @}
   */
@@ -125,37 +109,9 @@ static void USART2_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO
   * @{
   */
 /// @brief uart caracteristics
-static UART_HandleTypeDef g_UartHandle[NB_UART_MANAGED];
+extern UART_HandleTypeDef g_UartHandle[];
 
-static uart_conf_t g_uart_config[NB_UART_MANAGED] = {
-  //USART1 (PA9/PA10)
-  {
-    //UART ID and IRQ
-    .usart_typedef = USART1, .irqtype = USART1_IRQn,
-    //tx pin configuration
-    .tx_port = GPIOA, .tx_pin = GPIO_PIN_9,
-    //rx pin configuration
-    .rx_port = GPIOA, .rx_pin = GPIO_PIN_10,
-    .uart_af_remap = USART1_AF_Remap,
-    .data_available = 0,
-    .begin = 0,
-    .end = 0,
-    .uart_option = NATIVE_UART_E
-  },
-  //USART2 (PA2/PA3)
-  {
-    .usart_typedef = USART2, .irqtype = USART2_IRQn,
-    //tx pin configuration
-    .tx_port = GPIOA, .tx_pin = GPIO_PIN_2,
-    //rx pin configuration
-    .rx_port = GPIOA, .rx_pin = GPIO_PIN_3,
-    .uart_af_remap = USART2_AF_Remap,
-    .data_available = 0,
-    .begin = 0,
-    .end = 0,
-    .uart_option = NATIVE_UART_E
-  }
-};
+extern uart_conf_t g_uart_config[];
 
 static UART_Emul_HandleTypeDef g_UartEmulHandle[NB_UART_EMUL_MANAGED];
 

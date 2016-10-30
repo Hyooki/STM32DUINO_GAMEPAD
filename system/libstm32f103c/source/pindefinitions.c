@@ -1,6 +1,7 @@
 #include "stm32f1xx_hal.h"
 #include "spi_com.h"
 #include "twi.h"
+#include "uart.h"
 
 static void SPI1_Alternate(void)                { __HAL_AFIO_REMAP_SPI1_DISABLE(); } 
 
@@ -40,3 +41,40 @@ i2c_init_info_t g_i2c_init_info[] = {
 };
 
 uint8_t NB_I2C_INSTANCES = sizeof(g_i2c_init_info) / sizeof(g_i2c_init_info[0]);
+
+static void USART1_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO_REMAP_USART1_DISABLE();}
+static void USART2_AF_Remap(void)       {__HAL_RCC_AFIO_CLK_ENABLE(); __HAL_AFIO_REMAP_USART2_DISABLE();}
+
+uart_conf_t g_uart_config[] = {
+  //USART1 (PA9/PA10)
+  {
+    //UART ID and IRQ
+    .usart_typedef = USART1, .irqtype = USART1_IRQn,
+    //tx pin configuration
+    .tx_port = GPIOA, .tx_pin = GPIO_PIN_9,
+    //rx pin configuration
+    .rx_port = GPIOA, .rx_pin = GPIO_PIN_10,
+    .uart_af_remap = USART1_AF_Remap,
+    .data_available = 0,
+    .begin = 0,
+    .end = 0,
+    .uart_option = NATIVE_UART_E
+  },
+  //USART2 (PA2/PA3)
+  {
+    .usart_typedef = USART2, .irqtype = USART2_IRQn,
+    //tx pin configuration
+    .tx_port = GPIOA, .tx_pin = GPIO_PIN_2,
+    //rx pin configuration
+    .rx_port = GPIOA, .rx_pin = GPIO_PIN_3,
+    .uart_af_remap = USART2_AF_Remap,
+    .data_available = 0,
+    .begin = 0,
+    .end = 0,
+    .uart_option = NATIVE_UART_E
+  }
+};
+
+uint8_t NB_UART_MANAGED = sizeof(g_uart_config) / sizeof(g_uart_config[0]);
+
+UART_HandleTypeDef g_UartHandle[sizeof(g_uart_config) / sizeof(g_uart_config[0])];
