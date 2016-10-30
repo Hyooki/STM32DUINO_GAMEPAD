@@ -52,8 +52,28 @@
 ///@brief define the possible I2C instances
 typedef enum {
   I2C_1,
-  NB_I2C_INSTANCES
 }i2c_instance_e;
+
+extern uint8_t NB_I2C_INSTANCES;
+
+#define I2C_TXRX_BUFFER_SIZE    32
+
+typedef struct {
+  uint8_t init_done;
+  I2C_HandleTypeDef    i2c_handle;
+  I2C_TypeDef *i2c_instance;
+  IRQn_Type irq;
+  void (*i2c_alternate)(void);
+  GPIO_TypeDef  *sda_port;
+  uint32_t sda_pin;
+  GPIO_TypeDef  *scl_port;
+  uint32_t scl_pin;
+  void (*i2c_onSlaveReceive)(i2c_instance_e, uint8_t *, int);
+  void (*i2c_onSlaveTransmit)(i2c_instance_e);
+  uint8_t i2cTxRxBuffer[I2C_TXRX_BUFFER_SIZE];
+  uint8_t i2cTxRxBufferSize;
+  uint8_t slaveMode;
+} i2c_init_info_t;
 
 ///@brief I2C state
 typedef enum {
