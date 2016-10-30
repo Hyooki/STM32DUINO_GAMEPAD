@@ -71,20 +71,6 @@
   * @{
   */
 
-/// @brief defines the global attributes of the SPI
-typedef struct {
-  uint8_t init_done;
-  SPI_HandleTypeDef spiHandle;
-  SPI_TypeDef *spi_instance;
-  void (*spi_alternate)(void);
-  GPIO_TypeDef  *mosi_port;
-  uint32_t mosi_pin;
-  GPIO_TypeDef  *miso_port;
-  uint32_t miso_pin;
-  GPIO_TypeDef  *sck_port;
-  uint32_t sck_pin;
-} spi_init_info_t;
-
 /**
   * @}
   */
@@ -92,8 +78,6 @@ typedef struct {
 /** @addtogroup STM32F1xx_System_Private_Macros
   * @{
   */
-
-static void SPI1_Alternate(void)                { __HAL_AFIO_REMAP_SPI1_DISABLE(); }
 
 /**
   * @}
@@ -103,20 +87,7 @@ static void SPI1_Alternate(void)                { __HAL_AFIO_REMAP_SPI1_DISABLE(
   * @{
   */
 
-static spi_init_info_t spi_init_info[NB_SPI_INSTANCES] = {
-  {
-    .init_done = 0,
-    .spi_instance = SPI1,
-    .spi_alternate = SPI1_Alternate,
-    .mosi_port = GPIOA,
-    .mosi_pin =  GPIO_PIN_7,
-    .miso_port = GPIOA,
-    .miso_pin = GPIO_PIN_6,
-    .sck_port = GPIOA,
-    .sck_pin = GPIO_PIN_5,
-  }
-};
-
+extern spi_init_info_t spi_init_info[];
 /**
   * @}
   */
