@@ -480,4 +480,4 @@ def generate_pindefinitions(mcu, variant):
     with open(os.path.join('variants', variant, 'pindefinitions.h'), 'w') as file:
         file.write(header_code)
 
-generate_pindefinitions('STM32F103C8', 'STM32F103C-BluePill')
+generate_pindefinitions('STM32F103CB', 'STM32F103CB-MapleMini')

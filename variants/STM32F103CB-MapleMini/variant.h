@@ -60,13 +60,7 @@ extern "C"{
  *        Pins
  *----------------------------------------------------------------------------*/
 
-enum {
-  PB11, PB10, PB2, PB0, PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0, PC15, PC14,
-  PC13, PB7, PB6, PB5, PB4, PB3, PA15, PA14, PA13, PA12, PA11, PA10, PA9,
-  PA8, PB15, PB14, PB13, PB12, PB8, PB1,
-  PB9, // Not connected
-  NB_DIGITAL_PINS
-};
+#include "pindefinitions.h"
 
 #define digitalPinToPort(P)        ( g_APinDescription[P].ulPort )
 #define digitalPinToBitMask(P)     ( g_APinDescription[P].ulPin )
