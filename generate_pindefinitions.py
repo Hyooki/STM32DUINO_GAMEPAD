@@ -451,6 +451,7 @@ class load_mcu:
                 source_header += '|' + x.strip().ljust(column_sizes[column])
             source_header += '\n'
         
+        source_header += 'NB_DIGITAL_PINS,\n'
         source_header += '};\n'
         source_header += '\n'
         source_header += '#endif\n'
