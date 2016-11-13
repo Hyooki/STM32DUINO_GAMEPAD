@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import os.path
+from os import listdir
 import sys
 import re
 
@@ -340,8 +341,6 @@ class load_mcu:
         source_code += '#endif\n'
         source_code += 'uint8_t NB_PWM_INSTANCES = sizeof(g_pwm_config) / sizeof(g_pwm_config[0]);\n'
         
-        return source_code
-        
         source_code += '\n'
         source_code += 'remaps_t remaps {\n'
         
@@ -363,14 +362,20 @@ class load_mcu:
         
         return source_code
      
-    def generate_header_code(self):
-        source_header = '#ifndef PINDEFINITIONS_H\n'
-        source_header += '#define PINDEFINITIONS_H\n'
+    def generate_header_code(self, labels = {}):
+        source_header = '';
+        #source_header += '#ifndef PINDEFINITIONS_H\n'
+        #source_header += '#define PINDEFINITIONS_H\n'
         source_header += '\n'
         
         gpio_pins = [pin for pin in self.pins if pin.startswith('P') and pin != 'PDR_ON']
         
-        periphs = [p for p in self.peripherals if ('SPI' in p or 'I2C' in p or 'USART' in p)]
+        periphs = []
+        
+        if labels:
+            periphs.append('BOARD LABEL')
+            
+        periphs.extend([p for p in self.peripherals if ('SPI' in p or 'I2C' in p or 'USART' in p)])
         periphs.append('ADC1')
         periphs.append('TIM')
         periphs.append('USB')
@@ -379,6 +384,7 @@ class load_mcu:
         periphs.append('SYS')
         
         print_signals = [
+            'BOARD LABEL',
             'MISO', 'MOSI', 'SCK', #SPI
             'SDA', 'SCL', #I2C
             'TX', 'RX', #USART
@@ -406,6 +412,9 @@ class load_mcu:
                                     x += signal + ' '
                                 else:
                                     x += signal[signal.index('_') + 1:] + ' '
+                if periph == 'BOARD LABEL' and pin in labels:
+                    x = labels[pin]
+                    
                 column_sizes[column] = max(column_sizes[column], len(x.strip()))
                 column = column + 1;
 
@@ -440,7 +449,7 @@ class load_mcu:
                     if periph in signal:
                         for signal_pin in sorted(self.remaps[signal]):
                             if pin == signal_pin:
-                                if pin == self.defaultremaps[signal]:
+                                if signal in self.defaultremaps and pin == self.defaultremaps[signal]:
                                     x += '*'
                                 else:
                                     x += '+'
@@ -448,22 +457,19 @@ class load_mcu:
                                     x += signal + ' '
                                 else:
                                     x += signal[signal.index('_') + 1:] + ' '
+                if periph == 'BOARD LABEL' and pin in labels:
+                    x = labels[pin]
                 source_header += '|' + x.strip().ljust(column_sizes[column])
             source_header += '\n'
         
         source_header += 'NB_DIGITAL_PINS,\n'
         source_header += '};\n'
         source_header += '\n'
-        source_header += '#endif\n'
+        #source_header += '#endif\n'
         
         return source_header
 
-#mcus=[]
-#for mcu_element in families.findall(".//Mcu"):
-#    mcus.append(mcu_element.attrib['RPN'].split('-')[0]);
-#mcus = sorted(set(mcus))
-
-def generate_pindefinitions(mcu, variant):
+def generate_pindefinitions(mcu, variant, labels = {}, filename = 'pindefinitions'):
     mcu_parser = load_mcu(mcu)
 
     mcu_parser.find_remaps()
@@ -472,12 +478,45 @@ def generate_pindefinitions(mcu, variant):
 
     source_code = mcu_parser.generate_source_code()
 
-    header_code = mcu_parser.generate_header_code()
+    header_code = mcu_parser.generate_header_code(labels)
 
-    with open(os.path.join('variants', variant, 'pindefinitions.c'), 'w') as file:
-        file.write(source_code)
-        
-    with open(os.path.join('variants', variant, 'pindefinitions.h'), 'w') as file:
+    with open(os.path.join('variants', variant, filename + '.c'), 'w') as file:
         file.write(header_code)
+        file.write(source_code)
 
-generate_pindefinitions('STM32F103CB', 'STM32F103CB-MapleMini')
+    #with open(os.path.join('variants', variant, filename + '.h'), 'w') as file:
+    #    file.write(header_code)
+
+
+official_boards_dir = os.path.join(cubemx_dir, "db", "plugins", "boardmanager", "boards")
+official_boards = os.listdir(official_boards_dir)
+for board in official_boards:
+    if 'AllConfig' not in board:
+        continue
+    
+    if 'Evaluation' in board:
+        name = board.split('_')[3]
+    else:
+        name = board.split('_')[2]
+        
+    mcu = False
+
+    labels = {}
+    
+    with open(os.path.join(official_boards_dir, board)) as f:
+        for line in f.readlines():
+            if line.startswith('Mcu.UserName='):
+                mcu = line[line.index('=') + 1:].strip()[0:11]
+            if 'GPIO_Label=' in line:
+                pin_name = re.search('^(\D*\d*)', line).group(1)
+                pin_label = line[line.index('=') + 1:].strip()
+                labels[pin_name] = pin_label
+
+    #print name, mcu, labels
+    generate_pindefinitions(mcu, 'pindefinition_examples', labels, 'Official ' + name)
+
+generate_pindefinitions('STM32F103C8', 'pindefinition_examples', {'PC13':'LED'}, 'System Development Blue Board - Blue Pill')
+generate_pindefinitions('STM32F103CB', 'pindefinition_examples', {'PB1':'LED', 'PB8': 'BOOT0/BUTTON', 'PB9': 'USB DISC'}, 'Leaflabs Maple Mini')
+generate_pindefinitions('STM32F103VE', 'pindefinition_examples', {}, 'Vcc-gnd.com STM32F103VE')
+generate_pindefinitions('STM32F103ZE', 'pindefinition_examples', {}, 'Vcc-gnd.com STM32F103ZE')
+generate_pindefinitions('STM32F407VE', 'pindefinition_examples', {}, 'Vcc-gnd.com STM32F407VE')
