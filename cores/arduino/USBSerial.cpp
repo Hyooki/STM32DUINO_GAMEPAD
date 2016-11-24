@@ -29,6 +29,7 @@
 #ifdef SERIAL_USB
 #include <USBSerial.h>
 #include "variant.h"
+#include "USBDevice.h"
 
 // Constructors ////////////////////////////////////////////////////////////////
 USBSerial::USBSerial(){
@@ -38,29 +39,8 @@ USBSerial::USBSerial(){
 }
 
 void USBSerial::init(void){
-/* Re-enumerate the USB */
-  volatile unsigned int i;
-
-#ifdef USB_DISC_PIN
-  pinMode(USB_DISC_PIN, OUTPUT);
-  digitalWrite(USB_DISC_PIN, HIGH);
-	for(i=0;i<512;i++);
-  digitalWrite(USB_DISC_PIN, LOW);
-#else
-  //pinMode(USBDP_PIN, OUTPUT);
-  //digitalWrite(USBDP_PIN, LOW);
-	//for(i=0;i<512;i++);
-  //digitalWrite(USBDP_PIN, HIGH);
-
-  digital_io_init(GPIOA, GPIO_PIN_12, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL);
-  digital_io_write(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
-  //HAL_Delay(1000);
-  for(i=0;i<512;i++){};
-  digital_io_write(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);
-  //HAL_Delay(1000);
-  for(i=0;i<512;i++){};
-#endif
-  MX_USB_DEVICE_Init();
+    USBDevice.reenumerate();
+    MX_USB_DEVICE_Init();
 }
 
 
