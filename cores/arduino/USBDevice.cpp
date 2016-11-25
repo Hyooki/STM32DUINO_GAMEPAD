@@ -1,4 +1,5 @@
 #include "USBDevice.h"
+#include "usbd_hid.h"
 
 void USBDeviceClass::reenumerate() {
     volatile unsigned int i;
@@ -17,5 +18,13 @@ void USBDeviceClass::reenumerate() {
 #endif
 
 };
+
+void USBDeviceClass::beginHID() {
+    reenumerate();
+    
+    USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS);
+    USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
+    USBD_Start(&hUsbDeviceFS);
+}
 
 USBDeviceClass USBDevice;

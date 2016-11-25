@@ -6,6 +6,7 @@
 class USBDeviceClass {
     public:
         void reenumerate();
+        void beginHID();
 };
 
 extern USBDeviceClass USBDevice;
