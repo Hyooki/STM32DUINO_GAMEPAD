@@ -67,6 +67,7 @@ VPATH+=$(CMSIS_CHIP_PATH)/Include
 VPATH+=$(CMSIS_CHIP_PATH)/Source/
 VPATH+=$(STARTUP_FILE_PATH)
 VPATH+=$(USB_CDC_ROOT_PATH)/Class/CDC/Src
+VPATH+=$(USB_CDC_ROOT_PATH)/Class/HID/Src
 VPATH+=$(USB_CDC_ROOT_PATH)/Core/Src
 
 INCLUDES = -I$(PROJECT_BASE_PATH)
@@ -77,6 +78,7 @@ INCLUDES += -I$(CMSIS_ST_PATH)
 INCLUDES += -I$(CMSIS_CHIP_PATH)/Include
 INCLUDES += -I$(STARTUP_FILE_PATH)
 INCLUDES += -I$(USB_CDC_ROOT_PATH)/Class/CDC/Inc
+INCLUDES += -I$(USB_CDC_ROOT_PATH)/Class/HID/Inc
 INCLUDES += -I$(USB_CDC_ROOT_PATH)/Core/Inc
 
 #-------------------------------------------------------------------------------
@@ -111,6 +113,7 @@ C_SRC+=$(wildcard $(PROJECT_BASE_PATH)/source/*.c)
 C_SRC+=$(wildcard $(CMSIS_CHIP_PATH)/source/*.c)
 C_SRC+=$(wildcard $(CMSIS_CHIP_PATH)/source/gcc/*.c)
 C_SRC+=$(wildcard $(USB_CDC_ROOT_PATH)/Class/CDC/Src/*.c)
+C_SRC+=$(wildcard $(USB_CDC_ROOT_PATH)/Class/HID/Src/*.c)
 C_SRC+=$(wildcard $(USB_CDC_ROOT_PATH)/Core/Src/*.c)
 
 C_OBJ_TEMP=$(patsubst %.c, %.o, $(notdir $(C_SRC)))
