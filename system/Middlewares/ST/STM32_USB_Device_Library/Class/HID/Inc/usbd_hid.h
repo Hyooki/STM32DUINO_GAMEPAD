@@ -49,7 +49,7 @@
 /** @defgroup USBD_HID_Exported_Defines
   * @{
   */ 
-#define HID_EPIN_ADDR                 0x81
+#define HID_EPIN_ADDR                 0x85
 #define HID_EPIN_SIZE                 0x04
 
 #define USB_HID_CONFIG_DESC_SIZ       34
