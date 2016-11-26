@@ -1,5 +1,7 @@
 #include "USBDevice.h"
 #include "usbd_hid.h"
+#include "usbd_composite.h"
+#include "usb_descriptors.h"
 
 void USBDeviceClass::reenumerate() {
     volatile unsigned int i;
@@ -22,9 +24,23 @@ void USBDeviceClass::reenumerate() {
 void USBDeviceClass::beginHID() {
     reenumerate();
     
-    USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS);
+    USBD_Init(&hUsbDeviceFS, &FS_Desc_Composite, DEVICE_FS);
     USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
     USBD_Start(&hUsbDeviceFS);
-}
+};
+
+void USBDeviceClass::beginSerialHID() {
+    USBD_Composite_Set_Descriptor(COMPOSITE_CDC_HID_DESCRIPTOR, COMPOSITE_CDC_HID_DESCRIPTOR_SIZE);
+    
+    USBD_Composite_Set_Classes(&USBD_CDC, &USBD_HID);
+    
+    in_endpoint_to_class[HID_EPIN_ADDR & 0x7F] = 1;
+    
+    reenumerate();
+    USBD_Init(&hUsbDeviceFS, &FS_Desc_Composite, DEVICE_FS);
+    USBD_RegisterClass(&hUsbDeviceFS, &USBD_Composite);
+    USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS);
+    USBD_Start(&hUsbDeviceFS);
+};
 
 USBDeviceClass USBDevice;
