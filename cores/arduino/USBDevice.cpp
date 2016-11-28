@@ -24,7 +24,7 @@ void USBDeviceClass::reenumerate() {
 void USBDeviceClass::beginHID() {
     reenumerate();
     
-    USBD_Init(&hUsbDeviceFS, &FS_Desc_Composite, DEVICE_FS);
+    USBD_Init(&hUsbDeviceFS, &FS_Desc_Without_Driver, DEVICE_FS);
     USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
     USBD_Start(&hUsbDeviceFS);
 };
@@ -37,7 +37,7 @@ void USBDeviceClass::beginSerialHID() {
     in_endpoint_to_class[HID_EPIN_ADDR & 0x7F] = 1;
     
     reenumerate();
-    USBD_Init(&hUsbDeviceFS, &FS_Desc_Composite, DEVICE_FS);
+    USBD_Init(&hUsbDeviceFS, &FS_Desc_CDC_Interface_0, DEVICE_FS);
     USBD_RegisterClass(&hUsbDeviceFS, &USBD_Composite);
     USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS);
     USBD_Start(&hUsbDeviceFS);

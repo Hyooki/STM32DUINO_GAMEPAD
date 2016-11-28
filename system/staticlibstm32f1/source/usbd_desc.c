@@ -59,8 +59,10 @@
 #define USBD_VID     1155
 #define USBD_LANGID_STRING     1033
 #define USBD_MANUFACTURER_STRING     "STMicroelectronics"
-#define USBD_PID_FS     22336
 #define USBD_PRODUCT_STRING_FS     "STM32 Virtual ComPort"
+#define USBD_PID_FS_CDC_ONLY         0x5740
+#define USBD_PID_FS_CDC_INTERFACE_0  0x5741
+#define USBD_PID_FS_WITHOUT_DRIVER      0x5742
 #define USBD_SERIALNUMBER_STRING_FS     "00000000001A"
 #define USBD_CONFIGURATION_STRING_FS     "CDC Config"
 #define USBD_INTERFACE_STRING_FS     "CDC Interface"
@@ -82,8 +84,9 @@
 /** @defgroup USBD_DESC_Private_Variables
   * @{
   */ 
-uint8_t *     USBD_FS_DeviceDescriptor( USBD_SpeedTypeDef speed , uint16_t *length);
-uint8_t *     USBD_FS_DeviceDescriptor_Composite( USBD_SpeedTypeDef speed , uint16_t *length);
+uint8_t *     USBD_FS_DeviceDescriptor_CDC_Only( USBD_SpeedTypeDef speed , uint16_t *length);
+uint8_t *     USBD_FS_DeviceDescriptor_CDC_Interface_0( USBD_SpeedTypeDef speed , uint16_t *length);
+uint8_t *     USBD_FS_DeviceDescriptor_Without_Driver( USBD_SpeedTypeDef speed , uint16_t *length);
 uint8_t *     USBD_FS_LangIDStrDescriptor( USBD_SpeedTypeDef speed , uint16_t *length);
 uint8_t *     USBD_FS_ManufacturerStrDescriptor ( USBD_SpeedTypeDef speed , uint16_t *length);
 uint8_t *     USBD_FS_ProductStrDescriptor ( USBD_SpeedTypeDef speed , uint16_t *length);
@@ -95,9 +98,9 @@ uint8_t *     USBD_FS_InterfaceStrDescriptor( USBD_SpeedTypeDef speed , uint16_t
 uint8_t *     USBD_FS_USRStringDesc (USBD_SpeedTypeDef speed, uint8_t idx , uint16_t *length);  
 #endif /* USB_SUPPORT_USER_STRING_DESC */  
 
-USBD_DescriptorsTypeDef FS_Desc =
+USBD_DescriptorsTypeDef FS_Desc_CDC_Only =
 {
-  USBD_FS_DeviceDescriptor,
+  USBD_FS_DeviceDescriptor_CDC_Only,
   USBD_FS_LangIDStrDescriptor, 
   USBD_FS_ManufacturerStrDescriptor,
   USBD_FS_ProductStrDescriptor,
@@ -106,9 +109,20 @@ USBD_DescriptorsTypeDef FS_Desc =
   USBD_FS_InterfaceStrDescriptor,
 };
 
-USBD_DescriptorsTypeDef FS_Desc_Composite =
+USBD_DescriptorsTypeDef FS_Desc_CDC_Interface_0 =
 {
-  USBD_FS_DeviceDescriptor_Composite,
+  USBD_FS_DeviceDescriptor_CDC_Interface_0,
+  USBD_FS_LangIDStrDescriptor, 
+  USBD_FS_ManufacturerStrDescriptor,
+  USBD_FS_ProductStrDescriptor,
+  USBD_FS_SerialStrDescriptor,
+  USBD_FS_ConfigStrDescriptor,
+  USBD_FS_InterfaceStrDescriptor,
+};
+
+USBD_DescriptorsTypeDef FS_Desc_Without_Driver =
+{
+  USBD_FS_DeviceDescriptor_Without_Driver,
   USBD_FS_LangIDStrDescriptor, 
   USBD_FS_ManufacturerStrDescriptor,
   USBD_FS_ProductStrDescriptor,
@@ -121,7 +135,7 @@ USBD_DescriptorsTypeDef FS_Desc_Composite =
   #pragma data_alignment=4   
 #endif
 /* USB Standard Device Descriptor */
-__ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
+__ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc_CDC_Only[USB_LEN_DEV_DESC] __ALIGN_END =
   {
     0x12,                       /*bLength */
     USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
@@ -133,8 +147,8 @@ __ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
     USB_MAX_EP0_SIZE,          /*bMaxPacketSize*/
     LOBYTE(USBD_VID),           /*idVendor*/
     HIBYTE(USBD_VID),           /*idVendor*/
-    LOBYTE(USBD_PID_FS),           /*idVendor*/
-    HIBYTE(USBD_PID_FS),           /*idVendor*/
+    LOBYTE(USBD_PID_FS_CDC_ONLY),           /*idVendor*/
+    HIBYTE(USBD_PID_FS_CDC_ONLY),           /*idVendor*/
     0x00,                       /*bcdDevice rel. 2.00*/
     0x02,
     USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
@@ -152,7 +166,38 @@ __ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
   #pragma data_alignment=4   
 #endif
 /* USB Standard Device Descriptor */
-__ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc_Composite[USB_LEN_DEV_DESC] __ALIGN_END =
+__ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc_CDC_Interface_0[USB_LEN_DEV_DESC] __ALIGN_END =
+  {
+    0x12,                       /*bLength */
+    USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
+    0x00,                       /* bcdUSB */  
+    0x02,
+    0xEF,                       /*bDeviceClass    - IAD*/
+    0x02,                       /*bDeviceSubClass - IAD*/
+    0x01,                       /*bDeviceProtocol - IAD*/
+    USB_MAX_EP0_SIZE,          /*bMaxPacketSize*/
+    LOBYTE(USBD_VID),           /*idVendor*/
+    HIBYTE(USBD_VID),           /*idVendor*/
+    LOBYTE(USBD_PID_FS_CDC_INTERFACE_0),/*idVendor*/
+    HIBYTE(USBD_PID_FS_CDC_INTERFACE_0),/*idVendor*/
+    0x00,                       /*bcdDevice rel. 2.00*/
+    0x02,
+    USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
+    USBD_IDX_PRODUCT_STR,       /*Index of product string*/
+    USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
+    USBD_MAX_NUM_CONFIGURATION  /*bNumConfigurations*/
+  } ; 
+/* USB_DeviceDescriptor */
+
+#if defined ( __ICCARM__ ) /*!< IAR Compiler */
+  #pragma data_alignment=4   
+#endif
+
+#if defined ( __ICCARM__ ) /*!< IAR Compiler */
+  #pragma data_alignment=4   
+#endif
+/* USB Standard Device Descriptor */
+__ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc_Without_Driver[USB_LEN_DEV_DESC] __ALIGN_END =
   {
     0x12,                       /*bLength */
     USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
@@ -164,8 +209,8 @@ __ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc_Composite[USB_LEN_DEV_DESC] __ALIGN_END
     USB_MAX_EP0_SIZE,          /*bMaxPacketSize*/
     LOBYTE(USBD_VID),           /*idVendor*/
     HIBYTE(USBD_VID),           /*idVendor*/
-    LOBYTE(USBD_PID_FS),           /*idVendor*/
-    HIBYTE(USBD_PID_FS),           /*idVendor*/
+    LOBYTE(USBD_PID_FS_WITHOUT_DRIVER),/*idVendor*/
+    HIBYTE(USBD_PID_FS_WITHOUT_DRIVER),/*idVendor*/
     0x00,                       /*bcdDevice rel. 2.00*/
     0x02,
     USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
@@ -214,16 +259,22 @@ __ALIGN_BEGIN uint8_t USBD_StrDesc[USBD_MAX_STR_DESC_SIZ] __ALIGN_END;
 * @param  length : pointer to data length variable
 * @retval pointer to descriptor buffer
 */
-uint8_t *  USBD_FS_DeviceDescriptor( USBD_SpeedTypeDef speed , uint16_t *length)
+uint8_t *  USBD_FS_DeviceDescriptor_CDC_Only( USBD_SpeedTypeDef speed , uint16_t *length)
 {
-  *length = sizeof(USBD_FS_DeviceDesc);
-  return USBD_FS_DeviceDesc;
+  *length = sizeof(USBD_FS_DeviceDesc_CDC_Only);
+  return USBD_FS_DeviceDesc_CDC_Only;
 }
 
-uint8_t *  USBD_FS_DeviceDescriptor_Composite( USBD_SpeedTypeDef speed , uint16_t *length)
+uint8_t *  USBD_FS_DeviceDescriptor_CDC_Interface_0( USBD_SpeedTypeDef speed , uint16_t *length)
 {
-  *length = sizeof(USBD_FS_DeviceDesc_Composite);
-  return USBD_FS_DeviceDesc_Composite;
+  *length = sizeof(USBD_FS_DeviceDesc_CDC_Interface_0);
+  return USBD_FS_DeviceDesc_CDC_Interface_0;
+}
+
+uint8_t *  USBD_FS_DeviceDescriptor_Without_Driver( USBD_SpeedTypeDef speed , uint16_t *length)
+{
+  *length = sizeof(USBD_FS_DeviceDesc_Without_Driver);
+  return USBD_FS_DeviceDesc_Without_Driver;
 }
 
 /**

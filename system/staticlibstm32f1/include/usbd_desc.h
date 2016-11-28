@@ -75,9 +75,11 @@
 /** @defgroup USBD_DESC_Exported_Variables
   * @{
   */ 
-extern USBD_DescriptorsTypeDef FS_Desc;
+extern USBD_DescriptorsTypeDef FS_Desc_CDC_Only;
 
-extern USBD_DescriptorsTypeDef FS_Desc_Composite;
+extern USBD_DescriptorsTypeDef FS_Desc_CDC_Interface_0;
+
+extern USBD_DescriptorsTypeDef FS_Desc_Without_Driver;
 /**
   * @}
   */ 
