@@ -7,7 +7,7 @@
 #include "usbd_cdc.h"
 #include "usbd_ctlreq.h"
 
-#define COMPOSITE_CDC_HID_DESCRIPTOR_SIZE 83
+#define COMPOSITE_CDC_HID_DESCRIPTOR_SIZE 100
 
 extern uint8_t COMPOSITE_CDC_HID_DESCRIPTOR[COMPOSITE_CDC_HID_DESCRIPTOR_SIZE];
 

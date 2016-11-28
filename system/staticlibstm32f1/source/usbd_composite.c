@@ -48,6 +48,8 @@ static int classes;
 
 static USBD_ClassTypeDef *USBD_Classes[MAX_CLASSES];
 
+int interface_to_class[MAX_INTERFACES];
+
 int in_endpoint_to_class[MAX_ENDPOINTS];
 
 int out_endpoint_to_class[MAX_ENDPOINTS];
@@ -90,7 +92,7 @@ static uint8_t  USBD_Composite_DeInit (USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 static uint8_t USBD_Composite_Setup (USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
   switch (req->bmRequest & USB_REQ_TYPE_MASK) {
     case USB_REQ_TYPE_CLASS :
-      return USBD_Classes[req->wIndex]->Setup(pdev, req);
+      return USBD_Classes[interface_to_class[req->wIndex]]->Setup(pdev, req);
     
     case USB_REQ_TYPE_STANDARD:
       switch (req->bRequest) {
@@ -106,7 +108,7 @@ static uint8_t USBD_Composite_Setup (USBD_HandleTypeDef *pdev, USBD_SetupReqType
         
         case USB_REQ_GET_INTERFACE :
         case USB_REQ_SET_INTERFACE :
-        return USBD_Classes[req->wIndex]->Setup(pdev, req);
+        return USBD_Classes[interface_to_class[req->wIndex]]->Setup(pdev, req);
       }
   }
   return USBD_OK;

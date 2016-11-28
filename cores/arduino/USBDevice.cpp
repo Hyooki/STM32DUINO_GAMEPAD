@@ -34,6 +34,9 @@ void USBDeviceClass::beginSerialHID() {
     
     USBD_Composite_Set_Classes(&USBD_CDC, &USBD_HID);
     
+    USBD_MAX_NUM_INTERFACES = 3;
+    
+    interface_to_class[2] = 1;
     in_endpoint_to_class[HID_EPIN_ADDR & 0x7F] = 1;
     
     reenumerate();

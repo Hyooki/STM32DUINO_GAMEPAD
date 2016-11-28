@@ -9,9 +9,13 @@
 
 #define MAX_CLASSES 4
 
+#define MAX_INTERFACES 16
+
 #define MAX_ENDPOINTS 16
 
 extern USBD_ClassTypeDef USBD_Composite;
+
+extern int interface_to_class[MAX_ENDPOINTS];
 
 extern int in_endpoint_to_class[MAX_ENDPOINTS];
 
