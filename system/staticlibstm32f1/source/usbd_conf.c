@@ -45,6 +45,8 @@
 PCD_HandleTypeDef hpcd_USB_FS;
 void Error_Handler(void);
 
+int USBD_MAX_NUM_INTERFACES = 2;
+
 /* USER CODE BEGIN 0 */
 /* USER CODE END 0 */
 
