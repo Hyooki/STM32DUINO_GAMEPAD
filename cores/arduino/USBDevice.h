@@ -3,11 +3,20 @@
 
 #include "Arduino.h"
 
+class HIDDevice {
+    public:
+        void attachUSB(USBD_HandleTypeDef *usbDevice, uint8_t HIDReportID);
+        
+        uint8_t HIDReportID;
+        USBD_HandleTypeDef *usbDevice;
+};
+
+
 class USBDeviceClass {
     public:
         void reenumerate();
-        void beginHID();
-        void beginSerialHID();
+        void beginHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2 = NULL);
+        void beginSerialHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2 = NULL);
 };
 
 extern USBDeviceClass USBDevice;

@@ -3,6 +3,11 @@
 #include "usbd_composite.h"
 #include "usb_descriptors.h"
 
+void HIDDevice::attachUSB(USBD_HandleTypeDef *usbDevice, uint8_t HIDReportID) {
+    this->usbDevice = usbDevice;
+    this->HIDReportID = HIDReportID;
+}
+
 void USBDeviceClass::reenumerate() {
     volatile unsigned int i;
     
@@ -21,15 +26,20 @@ void USBDeviceClass::reenumerate() {
 
 };
 
-void USBDeviceClass::beginHID() {
+void USBDeviceClass::beginHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2) {
     reenumerate();
     
     USBD_Init(&hUsbDeviceFS, &FS_Desc_Without_Driver, DEVICE_FS);
     USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
     USBD_Start(&hUsbDeviceFS);
+    
+    hidDevice1->attachUSB(&hUsbDeviceFS, 1);
+    if (hidDevice2 != NULL) {
+        hidDevice2->attachUSB(&hUsbDeviceFS, 2);
+    }
 };
 
-void USBDeviceClass::beginSerialHID() {
+void USBDeviceClass::beginSerialHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2) {
     USBD_Composite_Set_Descriptor(COMPOSITE_CDC_HID_DESCRIPTOR, COMPOSITE_CDC_HID_DESCRIPTOR_SIZE);
     
     USBD_Composite_Set_Classes(&USBD_CDC, &USBD_HID);
@@ -44,6 +54,11 @@ void USBDeviceClass::beginSerialHID() {
     USBD_RegisterClass(&hUsbDeviceFS, &USBD_Composite);
     USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS);
     USBD_Start(&hUsbDeviceFS);
+    
+    hidDevice1->attachUSB(&hUsbDeviceFS, 1);
+    if (hidDevice2 != NULL) {
+        hidDevice2->attachUSB(&hUsbDeviceFS, 2);
+    }
 };
 
 USBDeviceClass USBDevice;
