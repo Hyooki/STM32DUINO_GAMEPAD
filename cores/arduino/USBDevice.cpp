@@ -44,10 +44,10 @@ void USBDeviceClass::beginSerialHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2
     
     USBD_Composite_Set_Classes(&USBD_CDC, &USBD_HID);
     
-    USBD_MAX_NUM_INTERFACES = 3;
+    USBD_MAX_NUM_INTERFACES = 2 /*2 CDC interface*/ + 1 /*1 HID interface*/;
     
-    interface_to_class[2] = 1;
-    in_endpoint_to_class[HID_EPIN_ADDR & 0x7F] = 1;
+    interface_to_class[2] = 1; //HID interface to HID class
+    in_endpoint_to_class[HID_EPIN_ADDR & 0x7F] = 1; // HID endpoint to HID class
     
     reenumerate();
     USBD_Init(&hUsbDeviceFS, &FS_Desc_CDC_Interface_0, DEVICE_FS);
