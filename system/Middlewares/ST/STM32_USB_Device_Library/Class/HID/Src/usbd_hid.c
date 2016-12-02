@@ -93,7 +93,7 @@
   * @{
   */
 
-static USBD_HID_HandleTypeDef HID_Handle;
+USBD_HID_HandleTypeDef HID_Handle;
 
 static uint8_t  USBD_HID_Init (USBD_HandleTypeDef *pdev, 
                                uint8_t cfgidx);
@@ -136,7 +136,7 @@ USBD_ClassTypeDef  USBD_HID =
 };
 
 /* USB HID device Configuration Descriptor */
-__ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ]  __ALIGN_END =
+__ALIGN_BEGIN uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ]  __ALIGN_END =
 {
   0x09, /* bLength: Configuration Descriptor size */
   USB_DESC_TYPE_CONFIGURATION, /* bDescriptorType: Configuration */
@@ -170,7 +170,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ]  __ALIGN_
   0x00,         /*bCountryCode: Hardware target country*/
   0x01,         /*bNumDescriptors: Number of HID class descriptors to follow*/
   0x22,         /*bDescriptorType*/
-  HID_MOUSE_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
+  0x00,         /*wItemLength: overwritten in USBDeviceClass*/
   0x00,
   /******************** Descriptor of Mouse endpoint ********************/
   /* 27 */
@@ -196,7 +196,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_Desc[USB_HID_DESC_SIZ]  __ALIGN_END  =
   0x00,         /*bCountryCode: Hardware target country*/
   0x01,         /*bNumDescriptors: Number of HID class descriptors to follow*/
   0x22,         /*bDescriptorType*/
-  HID_MOUSE_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
+  0x00,         /*wItemLength: overwritten with USBD_HID_HandleTypeDef.reportDescriptorsSize in USBD_HID_Setup*/
   0x00,
 };
 
@@ -215,56 +215,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_
   0x00,
 };
 
-__ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE]  __ALIGN_END =
-{
-  0x05,   0x01,
-  0x09,   0x02,
-  0xA1,   0x01,
-  0x85,   0x01,
-  0x09,   0x01,
-  
-  0xA1,   0x00,
-  0x05,   0x09,
-  0x19,   0x01,
-  0x29,   0x03,
-  
-  0x15,   0x00,
-  0x25,   0x01,
-  0x95,   0x03,
-  0x75,   0x01,
-  
-  0x81,   0x02,
-  0x95,   0x01,
-  0x75,   0x05,
-  0x81,   0x01,
-  
-  0x05,   0x01,
-  0x09,   0x30,
-  0x09,   0x31,
-  0x09,   0x38,
-  
-  0x15,   0x81,
-  0x25,   0x7F,
-  0x75,   0x08,
-  0x95,   0x03,
-  
-  0x81,   0x06,
-  0xC0,   0x09,
-  0x3c,   0x05,
-  0xff,   0x09,
-  
-  0x01,   0x15,
-  0x00,   0x25,
-  0x01,   0x75,
-  0x01,   0x95,
-  
-  0x02,   0xb1,
-  0x22,   0x75,
-  0x06,   0x95,
-  0x01,   0xb1,
-  
-  0x01,   0xc0
-}; 
+
 
 /**
   * @}
@@ -366,18 +317,39 @@ static uint8_t  USBD_HID_Setup (USBD_HandleTypeDef *pdev,
     case USB_REQ_GET_DESCRIPTOR: 
       if( req->wValue >> 8 == HID_REPORT_DESC)
       {
-        len = MIN(HID_MOUSE_REPORT_DESC_SIZE , req->wLength);
-        pbuf = HID_MOUSE_ReportDesc;
+        uint8_t buf[256] = {0};
+        uint16_t offset = 0;
+        
+        uint16_t wLength = req->wLength;
+        for(int i = 0; i < HID_MAX_REPORT_DESCRIPTORS; i++) 
+        {
+          if (HID_Handle.reportDescriptors[i] != NULL) 
+          {
+            len = MIN(HID_Handle.reportDescriptorSizes[i], wLength);
+            pbuf = HID_Handle.reportDescriptors[i];
+            memcpy(buf + offset, pbuf, len);
+            wLength -= len;
+            offset += len;
+          }
+        }
+        
+        pbuf = buf;
+        len = offset;
       }
       else if( req->wValue >> 8 == HID_DESCRIPTOR_TYPE)
       {
         pbuf = USBD_HID_Desc;   
         len = MIN(USB_HID_DESC_SIZ , req->wLength);
+        
+        uint8_t size = 0;
+        for(int i = 0; i < HID_MAX_REPORT_DESCRIPTORS; i++) {
+          size += HID_Handle.reportDescriptorSizes[i];
+        }
+        pbuf[7] = size;
+        
       }
       
-      USBD_CtlSendData (pdev, 
-                        pbuf,
-                        len);
+      USBD_CtlSendData (pdev, pbuf, len);
       
       break;
       

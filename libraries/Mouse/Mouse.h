@@ -18,6 +18,9 @@ class MouseClass: public HIDDevice {
         void release(uint8_t button = MOUSE_LEFT);
         bool isPressed(uint8_t button = MOUSE_LEFT);
         
+        virtual uint8_t *getReportDescriptor();
+        virtual uint16_t getReportDescriptorSize();
+        
     private:
         void sendReport(uint8_t buttonState, int8_t x, int8_t y, int8_t wheel);
         void setButtonState(uint8_t newButtonState);
