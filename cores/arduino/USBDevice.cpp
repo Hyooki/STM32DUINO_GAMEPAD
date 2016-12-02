@@ -26,6 +26,31 @@ void USBDeviceClass::reenumerate() {
 
 };
 
+void USBDeviceClass::setHID(uint8_t descriptor[], uint16_t descriptorSize, HIDDevice *hidDevice1, HIDDevice *hidDevice2) {
+    uint16_t reportDescriptorSize = 0;
+    
+    hidDevice1->attachUSB(&hUsbDeviceFS, 1);
+    HID_Handle.reportDescriptors[0] = hidDevice1->getReportDescriptor();
+    HID_Handle.reportDescriptorSizes[0] = hidDevice1->getReportDescriptorSize();
+    reportDescriptorSize += HID_Handle.reportDescriptorSizes[0];
+    
+    if (hidDevice2 != NULL) {
+        hidDevice2->attachUSB(&hUsbDeviceFS, 2);
+        
+        HID_Handle.reportDescriptors[1] = hidDevice2->getReportDescriptor();
+        HID_Handle.reportDescriptorSizes[1] = hidDevice2->getReportDescriptorSize();
+        
+        reportDescriptorSize += HID_Handle.reportDescriptorSizes[1];
+    }
+    
+    for(int offset = 0; offset < descriptorSize; offset += descriptor[offset]) {
+        if (descriptor[offset + 1] == HID_DESCRIPTOR_TYPE) {
+            descriptor[offset + 7] = reportDescriptorSize;
+            break;
+        }
+    }
+}
+
 void USBDeviceClass::beginHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2) {
     reenumerate();
     
@@ -33,10 +58,7 @@ void USBDeviceClass::beginHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2) {
     USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
     USBD_Start(&hUsbDeviceFS);
     
-    hidDevice1->attachUSB(&hUsbDeviceFS, 1);
-    if (hidDevice2 != NULL) {
-        hidDevice2->attachUSB(&hUsbDeviceFS, 2);
-    }
+    setHID(USBD_HID_CfgDesc, USB_HID_CONFIG_DESC_SIZ, hidDevice1, hidDevice2);
 };
 
 void USBDeviceClass::beginSerialHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2) {
@@ -55,10 +77,7 @@ void USBDeviceClass::beginSerialHID(HIDDevice *hidDevice1, HIDDevice *hidDevice2
     USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS);
     USBD_Start(&hUsbDeviceFS);
     
-    hidDevice1->attachUSB(&hUsbDeviceFS, 1);
-    if (hidDevice2 != NULL) {
-        hidDevice2->attachUSB(&hUsbDeviceFS, 2);
-    }
+    setHID(COMPOSITE_CDC_HID_DESCRIPTOR, COMPOSITE_CDC_HID_DESCRIPTOR_SIZE, hidDevice1, hidDevice2);
 };
 
 USBDeviceClass USBDevice;
