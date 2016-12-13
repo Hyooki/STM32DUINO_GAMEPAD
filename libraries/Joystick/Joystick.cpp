@@ -20,8 +20,6 @@
 
 #include "Joystick.h"
 
-#if defined(_USING_DYNAMIC_HID)
-
 #define JOYSTICK_REPORT_ID_INDEX 7
 #define JOYSTICK_AXIS_MINIMUM -32767
 #define JOYSTICK_AXIS_MAXIMUM 32767
@@ -103,7 +101,7 @@ Joystick_::Joystick_(
 		+ (includeSteering == true); 
 		
     uint8_t tempHidReportDescriptor[150];
-    int hidReportDescriptorSize = 0;
+    hidReportDescriptorSize = 0;
 
     // USAGE_PAGE (Generic Desktop)
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
@@ -431,12 +429,8 @@ Joystick_::Joystick_(
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0xc0;
 
 	// Create a copy of the HID Report Descriptor template that is just the right size
-	uint8_t *customHidReportDescriptor = new uint8_t[hidReportDescriptorSize];
+	customHidReportDescriptor = new uint8_t[hidReportDescriptorSize];
 	memcpy(customHidReportDescriptor, tempHidReportDescriptor, hidReportDescriptorSize);
-	
-	// Register HID Report Description
-	DynamicHIDSubDescriptor *node = new DynamicHIDSubDescriptor(customHidReportDescriptor, hidReportDescriptorSize, false);
-	DynamicHID().AppendDescriptor(node);
 	
     // Setup Joystick State
 	if (buttonCount > 0) {
@@ -638,13 +632,14 @@ int Joystick_::buildAndSetSimulationValue(bool includeValue, int16_t value, int1
 
 void Joystick_::sendState()
 {
-	uint8_t data[_hidReportSize];
-	int index = 0;
+	uint8_t data[_hidReportSize + 1];
+    data[0] = HIDReportID;
+	int index = 1;
 	
 	// Load Button State
-	for (; index < _buttonValuesArraySize; index++)
+	for (; index <= _buttonValuesArraySize; index++)
 	{
-		data[index] = _buttonValues[index];		
+		data[index] = _buttonValues[index - 1];		
 	}
 
 	// Set Hat Switch Values
@@ -684,7 +679,9 @@ void Joystick_::sendState()
 	index += buildAndSetSimulationValue(_includeSimulatorFlags & JOYSTICK_INCLUDE_BRAKE, _brake, _brakeMinimum, _brakeMaximum, &(data[index]));
 	index += buildAndSetSimulationValue(_includeSimulatorFlags & JOYSTICK_INCLUDE_STEERING, _steering, _steeringMinimum, _steeringMaximum, &(data[index]));
 
-	DynamicHID().SendReport(_hidReportId, data, _hidReportSize);
+    int timeout_millis = HID_FS_BINTERVAL;
+    while (USBD_HID_SendReport(usbDevice, data, sizeof(data)) != USBD_OK && timeout_millis > 0) {
+        delay(1);
+        timeout_millis--;
+    }
 }
-
-#endif

@@ -21,23 +21,9 @@
 #ifndef JOYSTICK_h
 #define JOYSTICK_h
 
-#include <DynamicHID.h>
-
-#if ARDUINO < 10606
-#error The Joystick library requires Arduino IDE 1.6.6 or greater. Please update your IDE.
-#endif
-
-#if ARDUINO > 10606
-#if !defined(USBCON)
-#error The Joystick library can only be used with a USB MCU (e.g. Arduino Leonardo, Arduino Micro, etc.).
-#endif
-#endif
-
-#if !defined(_USING_DYNAMIC_HID)
-
-#warning "Using legacy HID core (non pluggable)"
-
-#else
+#include <Arduino.h>
+#include "USBDevice.h"
+#include "usbd_hid.h"
 
 //================================================================================
 //  Joystick (Gamepad)
@@ -55,7 +41,7 @@
 #define JOYSTICK_TYPE_GAMEPAD              0x05
 #define JOYSTICK_TYPE_MULTI_AXIS           0x08
 
-class Joystick_
+class Joystick_: public HIDDevice
 {
 private:
 
@@ -106,6 +92,11 @@ private:
 
 	uint8_t                  _hidReportId;
 	uint8_t                  _hidReportSize; 
+    
+    uint8_t *customHidReportDescriptor;
+    int16_t hidReportDescriptorSize;
+    virtual uint8_t *getReportDescriptor() {return customHidReportDescriptor;};
+    virtual uint16_t getReportDescriptorSize() {return hidReportDescriptorSize;};
 
 protected:
 	int buildAndSet16BitValue(bool includeValue, int16_t value, int16_t valueMinimum, int16_t valueMaximum, int16_t actualMinimum, int16_t actualMaximum, uint8_t dataLocation[]);
@@ -214,5 +205,4 @@ public:
 	void sendState();
 };
 
-#endif
 #endif
