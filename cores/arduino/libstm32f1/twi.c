@@ -74,8 +74,6 @@
 /// @brief I2C timout in tick unit
 #define I2C_TIMEOUT_TICK        10000
 
-#define I2C_TXRX_BUFFER_SIZE    32
-
 #define SLAVE_MODE_TRANSMIT     0
 #define SLAVE_MODE_RECEIVE      1
 
@@ -96,22 +94,6 @@
   */
 
 /// @brief defines the global attributes of the I2C
-typedef struct {
-  uint8_t init_done;
-  I2C_HandleTypeDef    i2c_handle;
-  I2C_TypeDef *i2c_instance;
-  IRQn_Type irq;
-  void (*i2c_alternate)(void);
-  GPIO_TypeDef  *sda_port;
-  uint32_t sda_pin;
-  GPIO_TypeDef  *scl_port;
-  uint32_t scl_pin;
-  void (*i2c_onSlaveReceive)(i2c_instance_e, uint8_t *, int);
-  void (*i2c_onSlaveTransmit)(i2c_instance_e);
-  uint8_t i2cTxRxBuffer[I2C_TXRX_BUFFER_SIZE];
-  uint8_t i2cTxRxBufferSize;
-  uint8_t slaveMode;
-} i2c_init_info_t;
 
 /**
   * @}
@@ -120,23 +102,7 @@ typedef struct {
 /** @addtogroup STM32F1xx_System_Private_Variables
   * @{
   */
-static void i2c1_alternate(void)       {  __HAL_RCC_AFIO_CLK_ENABLE();
-                                          __HAL_AFIO_REMAP_I2C1_ENABLE(); }
-
-static i2c_init_info_t g_i2c_init_info[NB_I2C_INSTANCES] = {
-  {
-    .init_done = 0,
-    .i2c_instance = I2C1,
-    .i2c_alternate = i2c1_alternate,
-    .sda_port = GPIOB,
-    .sda_pin = GPIO_PIN_9,
-    .scl_port = GPIOB,
-    .scl_pin = GPIO_PIN_8,
-    .i2c_onSlaveReceive = NULL,
-    .i2c_onSlaveTransmit = NULL,
-    .i2cTxRxBufferSize = 0
-  }
-};
+extern i2c_init_info_t g_i2c_init_info[NB_I2C_INSTANCES];
 
 /**
   * @}
@@ -212,7 +178,9 @@ void i2c_custom_init(i2c_instance_e i2c_id, uint32_t timing, uint32_t addressing
       GPIO_MODE_AF_OD, 
       GPIO_PULLUP);
 
-    g_i2c_init_info[i2c_id].i2c_alternate();
+    if (g_i2c_init_info[i2c_id].i2c_alternate) {
+      g_i2c_init_info[i2c_id].i2c_alternate();
+    }
 
     //starting I2C
     g_i2c_init_info[i2c_id].i2c_handle.Init.ClockSpeed = timing;

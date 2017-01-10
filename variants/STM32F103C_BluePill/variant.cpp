@@ -66,6 +66,14 @@ extern const PinDescription g_APinDescription[]=
   { PC15,  GPIO_PIN_15, GPIOC, GPIO_PIN_IO,                                  false }
 };
 
+static void i2c1_alternate(void)       {  __HAL_RCC_AFIO_CLK_ENABLE();
+                                          __HAL_AFIO_REMAP_I2C1_DISABLE(); }
+
+i2c_init_info_t g_i2c_init_info[NB_I2C_INSTANCES] = {
+  { I2C1, i2c1_alternate, GPIOB, GPIO_PIN_7 , GPIOB, GPIO_PIN_6 },
+  { I2C2,           NULL, GPIOB, GPIO_PIN_11, GPIOB, GPIO_PIN_10 }
+};
+
 #ifdef __cplusplus
 }
 #endif
