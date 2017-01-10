@@ -101,8 +101,6 @@ typedef struct {
   I2C_HandleTypeDef    i2c_handle;
   I2C_TypeDef *i2c_instance;
   IRQn_Type irq;
-  void (*i2c_clock_init)(void);
-  void (*i2c_clock_deinit)(void);
   void (*i2c_alternate)(void);
   GPIO_TypeDef  *sda_port;
   uint32_t sda_pin;
@@ -122,8 +120,6 @@ typedef struct {
 /** @addtogroup STM32F1xx_System_Private_Variables
   * @{
   */
-static void i2c1_clk_enable(void)      { __HAL_RCC_I2C1_CLK_ENABLE();    }
-static void i2c1_clk_disable(void)     { __HAL_RCC_I2C1_CLK_DISABLE();   }
 static void i2c1_alternate(void)       {  __HAL_RCC_AFIO_CLK_ENABLE();
                                           __HAL_AFIO_REMAP_I2C1_ENABLE(); }
 
@@ -131,9 +127,6 @@ static i2c_init_info_t g_i2c_init_info[NB_I2C_INSTANCES] = {
   {
     .init_done = 0,
     .i2c_instance = I2C1,
-    .irq = I2C1_EV_IRQn,
-    .i2c_clock_init = i2c1_clk_enable,
-    .i2c_clock_deinit = i2c1_clk_disable,
     .i2c_alternate = i2c1_alternate,
     .sda_port = GPIOB,
     .sda_pin = GPIO_PIN_9,
@@ -194,7 +187,18 @@ void i2c_custom_init(i2c_instance_e i2c_id, uint32_t timing, uint32_t addressing
     }
 
     //Enable Clocks
-    g_i2c_init_info[i2c_id].i2c_clock_init();
+    #ifdef I2C1
+      if (g_i2c_init_info[i2c_id].i2c_instance == I2C1) {
+        __HAL_RCC_I2C1_CLK_ENABLE();
+        g_i2c_init_info[i2c_id].irq = I2C1_EV_IRQn;
+      }
+    #endif
+    #ifdef I2C_2
+      if (g_i2c_init_info[i2c_id].i2c_instance == I2C_2) {
+        __HAL_RCC_I2C2_CLK_ENABLE();
+        g_i2c_init_info[i2c_id].irq = I2C2_EV_IRQn;
+      }
+    #endif
 
     //SCL
     digital_io_init(g_i2c_init_info[i2c_id].scl_port, 
@@ -243,7 +247,12 @@ void i2c_deinit(i2c_instance_e i2c_id)
 {
   if(g_i2c_init_info[i2c_id].init_done == 1) {
 
-    g_i2c_init_info[i2c_id].i2c_clock_deinit();
+    #ifdef I2C1
+      if (g_i2c_init_info[i2c_id].i2c_instance == I2C1) __HAL_RCC_I2C1_CLK_DISABLE();
+    #endif
+    #ifdef I2C2
+      if (g_i2c_init_info[i2c_id].i2c_instance == I2C2) __HAL_RCC_I2C2_CLK_DISABLE();
+    #endif
 
     HAL_NVIC_DisableIRQ(g_i2c_init_info[i2c_id].irq);
 
