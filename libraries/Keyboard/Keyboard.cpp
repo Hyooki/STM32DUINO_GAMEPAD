@@ -177,7 +177,12 @@ void KeyboardClass::press(uint8_t ch) {
     if (ch > IS_KEY_CODE) {
         pressScanCode(ch - IS_KEY_CODE);
     } else {
-        pressScanCode(_asciimap[ch]);
+        if ((_asciimap[ch] & SHIFT) == SHIFT) {
+            setModifiers(MODIFIER_SHIFT);
+        } else {
+            setModifiers(0);
+        }
+        pressScanCode(_asciimap[ch] & 0x7F);
     }
 }
 
@@ -185,7 +190,8 @@ void KeyboardClass::release(uint8_t ch) {
     if (ch > IS_KEY_CODE) {
         releaseScanCode(ch - IS_KEY_CODE);
     } else {
-        releaseScanCode(_asciimap[ch]);
+        setModifiers(0);
+        releaseScanCode(_asciimap[ch] & 0x7F);
     }
 }
 
@@ -196,12 +202,6 @@ size_t KeyboardClass::write(uint8_t ch) {
 }
 
 void KeyboardClass::pressScanCode(uint8_t keyCode) {
-    if ((keyCode & SHIFT) == SHIFT) {
-        setModifiers(MODIFIER_SHIFT);
-    } else {
-        setModifiers(0);
-    }
-    
     for(int i=3; i<9; i++) {
         if (report[i] == 0) {
             report[i] = keyCode & 0x7F;
@@ -213,8 +213,6 @@ void KeyboardClass::pressScanCode(uint8_t keyCode) {
 }
 
 void KeyboardClass::releaseScanCode(uint8_t keyCode) {
-    setModifiers(0);
-    
     for(int i=3; i<9; i++) {
         if (report[i] == (keyCode & 0x7F)) {
             report[i] = 0;
