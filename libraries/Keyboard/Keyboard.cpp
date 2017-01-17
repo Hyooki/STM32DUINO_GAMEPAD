@@ -174,11 +174,19 @@ uint16_t KeyboardClass::getReportDescriptorSize() {
 }
         
 void KeyboardClass::press(uint8_t ch) {
-    pressScanCode(_asciimap[ch]);
+    if (ch > IS_KEY_CODE) {
+        pressScanCode(ch - IS_KEY_CODE);
+    } else {
+        pressScanCode(_asciimap[ch]);
+    }
 }
 
 void KeyboardClass::release(uint8_t ch) {
-    releaseScanCode(_asciimap[ch]);
+    if (ch > IS_KEY_CODE) {
+        releaseScanCode(ch - IS_KEY_CODE);
+    } else {
+        releaseScanCode(_asciimap[ch]);
+    }
 }
 
 size_t KeyboardClass::write(uint8_t ch) {
