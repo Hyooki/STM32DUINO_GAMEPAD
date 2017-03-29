@@ -133,6 +133,11 @@ void digital_io_init(GPIO_TypeDef  *port, uint32_t pin, uint32_t mode, uint32_t 
   HAL_GPIO_Init(port, &GPIO_InitStructure);
 }
 
+void digital_io_deinit(GPIO_TypeDef  *port, uint32_t pin)
+{
+  HAL_GPIO_DeInit(port, pin);
+}
+
 /**
   * @brief  This function set a value to an IO
   * @param  port : one of the gpio port

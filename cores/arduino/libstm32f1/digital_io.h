@@ -51,6 +51,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void digital_io_init(GPIO_TypeDef  *port, uint32_t pin, uint32_t mode, uint32_t pull);
+void digital_io_deinit(GPIO_TypeDef  *port, uint32_t pin);
 void digital_io_write(GPIO_TypeDef  *port, uint32_t pin, uint32_t val);
 uint32_t digital_io_read(GPIO_TypeDef  *port, uint32_t pin);
 
