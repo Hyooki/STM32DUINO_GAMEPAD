@@ -66,8 +66,6 @@ typedef struct {
   uint32_t pin;
   uint32_t irqnb;
   void (*callback)(void);
-  uint32_t mode;
-  uint32_t configured;
 }gpio_irq_conf_str;
 
 /**
@@ -96,22 +94,22 @@ typedef struct {
   * @{
   */
 static gpio_irq_conf_str gpio_irq_conf[NB_EXTI] = {
-  {.pin = GPIO_PIN_0,   .irqnb = EXTI0_IRQn,    .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_1,   .irqnb = EXTI1_IRQn,    .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_2,   .irqnb = EXTI2_IRQn,    .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_3,   .irqnb = EXTI3_IRQn,    .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_4,   .irqnb = EXTI4_IRQn,    .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_5,   .irqnb = EXTI9_5_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_6,   .irqnb = EXTI9_5_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_7,   .irqnb = EXTI9_5_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_8,   .irqnb = EXTI9_5_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_9,   .irqnb = EXTI9_5_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_10,  .irqnb = EXTI15_10_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_11,  .irqnb = EXTI15_10_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_12,  .irqnb = EXTI15_10_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_13,  .irqnb = EXTI15_10_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_14,  .irqnb = EXTI15_10_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 },
-  {.pin = GPIO_PIN_15,  .irqnb = EXTI15_10_IRQn,  .callback = NULL, .mode = GPIO_MODE_IT_RISING, .configured = 0 }
+  {.pin = GPIO_PIN_0,   .irqnb = EXTI0_IRQn,    .callback = NULL},
+  {.pin = GPIO_PIN_1,   .irqnb = EXTI1_IRQn,    .callback = NULL},
+  {.pin = GPIO_PIN_2,   .irqnb = EXTI2_IRQn,    .callback = NULL},
+  {.pin = GPIO_PIN_3,   .irqnb = EXTI3_IRQn,    .callback = NULL},
+  {.pin = GPIO_PIN_4,   .irqnb = EXTI4_IRQn,    .callback = NULL},
+  {.pin = GPIO_PIN_5,   .irqnb = EXTI9_5_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_6,   .irqnb = EXTI9_5_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_7,   .irqnb = EXTI9_5_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_8,   .irqnb = EXTI9_5_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_9,   .irqnb = EXTI9_5_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_10,  .irqnb = EXTI15_10_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_11,  .irqnb = EXTI15_10_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_12,  .irqnb = EXTI15_10_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_13,  .irqnb = EXTI15_10_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_14,  .irqnb = EXTI15_10_IRQn,  .callback = NULL},
+  {.pin = GPIO_PIN_15,  .irqnb = EXTI15_10_IRQn,  .callback = NULL}
 };
 
 /**
@@ -165,7 +163,7 @@ void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin,
 
   // GPIO pin configuration
   GPIO_InitStruct.Pin       = pin;
-  GPIO_InitStruct.Mode      = mode;
+  GPIO_InitStruct.Mode      = GPIO_MODE_IT_RISING;
 
   //read the pull mode directly in the register as no function exists to get it.
   //Do it in case the user already defines the IO through the digital io
