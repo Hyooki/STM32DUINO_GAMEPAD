@@ -95,6 +95,7 @@ uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 //USBD_HandleTypeDef  *hUsbDevice_0;
 /* USER CODE BEGIN PRIVATE_VARIABLES */
 uint8_t dtr_pin = 0; //DTR pin is disabled
+uint8_t usb_cdc_dtr_set = 0;
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -225,6 +226,7 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
 
   case CDC_SET_CONTROL_LINE_STATE:
       dtr_pin++; //DTR pin is enabled
+      usb_cdc_dtr_set = ((USBD_SetupReqTypedef*)pbuf)->wValue & 1;
     break;
 
   case CDC_SEND_BREAK:

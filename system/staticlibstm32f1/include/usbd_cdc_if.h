@@ -89,6 +89,8 @@ uint8_t CDC_getTransmitterStatus(void);
   */
 extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
 
+extern uint8_t usb_cdc_dtr_set;
+
 /* USER CODE BEGIN EXPORTED_VARIABLES */
 /* USER CODE END EXPORTED_VARIABLES */
 

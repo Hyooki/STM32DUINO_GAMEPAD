@@ -174,19 +174,7 @@ void USBSerial::CDC_RxHandler (uint8_t* Buf, uint16_t Len){
 // where the port is configured (lineState != 0) but not quite opened.
 USBSerial::operator bool()
 {
-	// this is here to avoid spurious opening after upload
-	if (millis() < 500)
-		return false;
-
-	bool result = false;
-
-/* 	if (_usbLineInfo.lineState > 0)
-	{
-		result = true;
-	}
-
-	delay(10); */
-	return result;
+	return usb_cdc_dtr_set;
 }
 
 uint32_t USBSerial::baud() {
