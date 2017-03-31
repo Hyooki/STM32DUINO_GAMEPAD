@@ -59,7 +59,6 @@ STM32F100RB:
 clean:
 	@echo ------------------------------------------------------------------------
 	@echo --- Cleaning lib release and debug
-	@$(MAKE) CHIP=__STM32F103C__ $(SUBMAKE_OPTIONS) -f stm32f103c.mk $@
 	@$(MAKE) CHIP=STM32F103xB CHIP_STARTUP_FILE=startup_stm32f103xb.s LIBNAME=libstm32f103c CHIP_NAME=stm32f103c OUTPUT_BIN=../../../variants/STM32F103C_BluePill $(SUBMAKE_OPTIONS) -f stm32f103c.mk $@
 	@$(MAKE) CHIP=STM32F103xB CHIP_STARTUP_FILE=startup_stm32f103xb.s LIBNAME=libstm32f103c CHIP_NAME=maplemini_stm32f103c OUTPUT_BIN=../../../variants/STM32F103CB_MapleMini $(SUBMAKE_OPTIONS) -f stm32f103c.mk $@
 	@$(MAKE) CHIP=STM32F103xB CHIP_STARTUP_FILE=startup_stm32f103xb.s LIBNAME=libstm32f1 CHIP_NAME=nucleo_f103rb OUTPUT_BIN=../../../variants/STM32F103RB_Nucleo $(SUBMAKE_OPTIONS) -f stm32f103c.mk $@
