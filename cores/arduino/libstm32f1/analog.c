@@ -396,7 +396,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
   /* DAC Periph clock enable */
   __HAL_RCC_DAC_CLK_ENABLE();
 
-  digital_io_init(g_analog_init_config[g_current_init_id].port, g_analog_init_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL)
+  digital_io_init(g_analog_init_config[g_current_init_id].port, g_analog_init_config[g_current_init_id].pin, GPIO_MODE_ANALOG, GPIO_NOPULL);
 }
 
 #endif
